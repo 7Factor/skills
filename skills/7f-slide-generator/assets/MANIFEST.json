@@ -1,0 +1,80 @@
+{
+  "schema_version": 2,
+  "synced_at": "2026-05-19",
+  "synced_by": "Scott Pfister",
+  "notes": "Provenance record for brand assets bundled in this skill. This file is informational \u2014 it documents where the files came from and their SHA-256 hashes at capture time. There is no automated drift check against SharePoint; refresh by hand when the brand changes. See this skill's README.md for the procedure.",
+  "sharepoint": {
+    "site_url": "https://7factor.sharepoint.com/sites/marketing/",
+    "library": "Documents",
+    "folders": {
+      "logos": {
+        "path": "Branding/Logo/PNG",
+        "share_url": "https://7factor.sharepoint.com/:f:/s/marketing/IgBj6SdXxfmyTIXRyAxo2UUtAcBn5vc0e4X8xW1_PwDUtBA?e=PaPHmW",
+        "note": "Only the PNG subfolder is tracked. The skill inline-encodes PNGs into HTML output; SVG/EPS/etc. siblings are intentionally ignored."
+      },
+      "brand_guidelines": {
+        "path": "Branding/Brand Guidelines",
+        "share_url": "https://7factor.sharepoint.com/:f:/s/marketing/IgB-Ke_L-LWoTpYlZTkzXS5qAYlsY9cMhnPOyU9PLMj8PPA?e=X79CYA",
+        "note": "Source material for the hand-curated references/*.md files."
+      }
+    }
+  },
+  "logos": [
+    {
+      "local_path": "assets/logo/7F-R-hor-orange-text-navy.png",
+      "sharepoint_path": "Branding/Logo/PNG/7F-R-hor-orange-text-navy.png",
+      "sha256": "3c7d0414b542a3a133ac0b53c9306eee1aa78b3e1f1979f6758f8f8264907312",
+      "size_bytes": 52100,
+      "purpose": "Horizontal lockup, orange wordmark on navy"
+    },
+    {
+      "local_path": "assets/logo/7F-R-hor-white-text-navy.png",
+      "sharepoint_path": "Branding/Logo/PNG/7F-R-hor-white-text-navy.png",
+      "sha256": "11d37188d3aa50e2351c9d34af9d9d6468cd1e5da3c03c0d2263619826ffc657",
+      "size_bytes": 52642,
+      "purpose": "Horizontal lockup, white wordmark on navy"
+    },
+    {
+      "local_path": "assets/logo/7F-R-Mark-blue-orange.png",
+      "sharepoint_path": "Branding/Logo/PNG/7F-R-Mark-blue-orange.png",
+      "sha256": "f20b7b059781104b3716226a1938fde2b41919e086e3e054c74e216c9990d060",
+      "size_bytes": 49784,
+      "purpose": "Mark only, blue with orange accent"
+    },
+    {
+      "local_path": "assets/logo/7F-R-mark-white.png",
+      "sharepoint_path": "Branding/Logo/PNG/7F-R-mark-white.png",
+      "sha256": "c286507c18803de1b80a4f8340ac993916c8cdd8b01c1453146fa634edef77aa",
+      "size_bytes": 64207,
+      "purpose": "Mark only, white (for dark backgrounds)"
+    },
+    {
+      "local_path": "assets/logo/7F-R-stacked-orange-text-navy.png",
+      "sharepoint_path": "Branding/Logo/PNG/7F-R-stacked-orange-text-navy.png",
+      "sha256": "5cfd4acaf8f6f77e95e3331836010b6c3160c6d87e15d734ae77d031caa3423d",
+      "size_bytes": 58678,
+      "purpose": "Stacked lockup, orange wordmark on navy"
+    },
+    {
+      "local_path": "assets/logo/7F-R-stacked-white-text-navy.png",
+      "sharepoint_path": "Branding/Logo/PNG/7F-R-stacked-white-text-navy.png",
+      "sha256": "997d1ed93cad06f53dee2967be579bbc64ec7c3a418a6998c891a260d61ef855",
+      "size_bytes": 59168,
+      "purpose": "Stacked lockup, white wordmark on navy"
+    }
+  ],
+  "reference_sources": [
+    {
+      "local_path": "references/7factor-brand.md",
+      "derived_from_folder": "Branding/Brand Guidelines",
+      "synced_at": "2026-05-19",
+      "note": "Hand-curated from the upstream brand guide(s). When source documents change, this file likely needs a hand edit."
+    },
+    {
+      "local_path": "references/7factor-slide-patterns.md",
+      "derived_from_folder": "Branding/Brand Guidelines",
+      "synced_at": "2026-05-19",
+      "note": "Hand-curated from internal slide templates. When source templates change, this file likely needs a hand edit."
+    }
+  ]
+}

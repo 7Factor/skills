@@ -8,6 +8,7 @@ directory with a `SKILL.md` file that describes when the skill should be loaded 
 ## Available Skills
 
 - `mentor`: switches an agent into learning-first mentoring mode for developing engineers.
+- `7f-slide-generator`: generates 7Factor-branded HTML slide decks by overlaying the `visual-explainer` skill with the 7Factor brand system (colors, typography, logos, layouts). Requires [`visual-explainer`](https://github.com/nicobailon/visual-explainer) by Nico Bailon to be installed; the skill runs a preflight check and prints harness-specific install instructions if it is missing.
 
 ## Install
 
