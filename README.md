@@ -26,6 +26,12 @@ For example:
 npx skills add 7Factor/skills --skill mentor
 ```
 
+The `7f-slide-generator` skill depends on Nico Bailon's [`visual-explainer`](https://github.com/nicobailon/visual-explainer) skill for slide-deck mechanics. Install `visual-explainer` for your agent harness first (for Pi: `pi install git:github.com/nicobailon/visual-explainer`), then install the 7Factor overlay:
+
+```sh
+npx skills add 7Factor/skills --skill 7f-slide-generator
+```
+
 Install a skill globally for Codex:
 
 ```sh
