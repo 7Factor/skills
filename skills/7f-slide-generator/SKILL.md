@@ -13,20 +13,30 @@ This skill is **non-functional without `visual-explainer` installed**. It delega
 
 ### Preflight check (run before anything else)
 
-1. Detect the agent harness from environment markers (in priority order):
-   - Claude Code: `~/.claude/` exists or `$CLAUDECODE`/`$CLAUDE_CODE_*` env vars set
-   - Codex CLI: `~/.codex/` exists
-   - Pi: `~/.pi/` exists
-   - OpenCode: `~/.config/opencode/` exists
-   - Cursor: `.cursor/` in the working tree
-   - OpenClaw: `~/.openclaw/` exists
-2. Check whether `visual-explainer` is installed at the harness-appropriate path:
-   - Claude Code: `~/.claude/plugins/**/visual-explainer/` or `~/.claude/skills/visual-explainer/` or `.claude/skills/visual-explainer/`
-   - Codex: `~/.codex/skills/visual-explainer/`
-   - Pi: `~/.pi/agent/skills/visual-explainer/`
-   - OpenCode: `~/.config/opencode/skill/visual-explainer/`
-   - Cursor / OpenClaw / unknown: any of the above
-3. If not found, **stop and print the install message below.** Do not attempt to generate slides without it — the brand contract assumes visual-explainer's slide-deck mechanics.
+1. Determine the **active harness that invoked this skill**. Prefer direct runtime context over filesystem clues:
+   - Explicit system/developer prompt text or harness metadata (for example, "operating inside pi", "Claude Code", "Codex CLI", "OpenCode", "Cursor", or "OpenClaw")
+   - Harness-specific command namespace currently in use (for example, Claude Code plugin commands, Pi skill commands, Codex prompt invocation)
+   - Environment variables that identify the current running process (for example, `$CLAUDECODE`, `$CLAUDE_CODE_*`, or other harness-provided runtime variables)
+   - The installed location of **this 7f-slide-generator skill**, if it clearly identifies the active harness
+2. **Do not infer the active harness from home-directory existence alone.** A user may have `~/.claude/`, `~/.codex/`, `~/.pi/`, and OpenCode config on the same machine. Those directories only prove that a harness is configured, not that it invoked this skill.
+3. Check whether `visual-explainer` is installed for the **active harness only**, using the harness' own loaded-skill/resource view when available before falling back to filesystem checks:
+   - **Pi**:
+     1. If the current system/developer prompt exposes an `<available_skills>` list and it includes `visual-explainer`, treat it as installed. Prefer this over filesystem inference because Pi may load package-managed skills from anywhere in its resource graph.
+     2. If you need to verify from disk, check all Pi skill sources, not only copied user skills:
+        - Direct/global skills: `~/.pi/agent/skills/visual-explainer/SKILL.md`
+        - Shared Agent Skills: `~/.agents/skills/visual-explainer/SKILL.md`
+        - Project skills: `.pi/skills/**/visual-explainer/SKILL.md` and `.agents/skills/**/visual-explainer/SKILL.md` from the current working directory up through ancestors
+        - Explicit `skills` paths in Pi settings (`~/.pi/agent/settings.json` and project `.pi/settings.json`), resolving relative project paths from the settings file location
+        - Package-managed installs declared by `packages` in Pi settings. For git installs, this commonly means resources under `~/.pi/agent/git/<host>/<owner>/<repo>/` or `.pi/git/<host>/<owner>/<repo>/`; inspect `package.json` `pi.skills` entries and conventional `skills/` directories. For `visual-explainer`, the package-managed skill path is typically `~/.pi/agent/git/github.com/nicobailon/visual-explainer/plugins/visual-explainer/SKILL.md`.
+     3. `pi list` can confirm that the package source is registered, but it lists packages, not the final loaded skill set. Do not use `pi list` alone as proof that the skill command is available; prefer the runtime `<available_skills>` list, slash-command availability, or the resolved package manifest path above.
+   - **Claude Code**: use Claude's plugin/skill registry or command availability when visible; otherwise check `~/.claude/plugins/**/visual-explainer/`, `~/.claude/skills/visual-explainer/`, and `.claude/skills/visual-explainer/`.
+   - **Codex CLI**: use Codex' loaded skills if exposed; otherwise check `~/.codex/skills/visual-explainer/` and any configured project skill paths.
+   - **OpenCode**: check `~/.config/opencode/skill/visual-explainer/` and any configured OpenCode skill paths.
+   - **Cursor**: check for a Cursor-accessible rule/config install as documented by the upstream `visual-explainer` README.
+   - **OpenClaw**: check for OpenClaw-accessible AGENTS/rules guidance plus the canonical skill directory as documented by the upstream `visual-explainer` README.
+4. If the active harness is known, an install for a different harness **must not** satisfy this check. For example, when running in Pi, `~/.claude/.../visual-explainer/` and `~/.codex/skills/visual-explainer/` do not count; Pi needs the skill loaded by Pi, either directly or through a Pi package.
+5. Only if the active harness cannot be determined after checking runtime context may you use the broad fallback: search all known install paths and ask the user which harness they are using before proceeding.
+6. If not found for the active harness, **stop and print the install message below.** Do not attempt to generate slides without it — the brand contract assumes visual-explainer's slide-deck mechanics.
 
 ### Install instructions bookmark
 

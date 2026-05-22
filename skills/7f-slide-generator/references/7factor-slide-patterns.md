@@ -26,6 +26,20 @@ These are the required, opinionated slide patterns. The model decides which to u
 - One viewport per slide. No scrolling within a slide.
 - Generous whitespace. Cards over dense text.
 - **Maximum two accent colors per slide** for typography and primary surfaces. **Exception**: decorative triangle motifs (the brand's icon system) may use the full multi-color palette — e.g., the 7 Factors grid intentionally rotates triangle colors across all bullets. The two-color rule governs heading/CTA/surface color, not the triangle motif.
+- Do **not** use a freestanding typed `7` as decoration. It reads like a broken or fake logo. Use the real logo where logo rules allow it, or use the rounded triangle motif / accent bars for decoration.
+
+## Brand-guidelines exemplar lessons
+
+The source deck at `~/7f-branding-20260519/7Factor Brand Guidelines.pptx` is an exemplar for brand usage. Do not copy its slides verbatim, but borrow these composition habits:
+
+- **Asymmetric layouts are normal.** Many slides put a large title block on one side and the content on the other, rather than centering everything.
+- **Use bold edge geometry.** Thin or thick brand-color strips along the left edge, top-left corner, or a vertical dividing line create the 7Factor feel without adding noise.
+- **Let one object dominate.** A slide often has one oversized title, statement, logo sample, or value proposition, with small supporting copy nearby.
+- **Prefer sparse text groupings.** Use short paragraphs, stacked rules, or grouped statements with generous whitespace instead of dense bullet walls.
+- **Use triangle clusters deliberately.** Rounded equilateral triangles work well as corner accents, section markers, bullet markers, or background motifs. Keep clusters intentional and airy; do not scatter them randomly.
+- **Use color-block rhythm.** Orange and blue blocks/strips can alternate between sections to create pacing. Navy is strongest for dark divider/title moments and primary text.
+- **Use split-rule layouts for guidelines.** For “do/don’t,” tagline rules, logo rules, and standards, combine a large example with adjacent rule callouts connected by thin brand-color rules.
+- **Use all-caps section labels sparingly.** The source deck uses uppercase for brand-system labels like `TYPOGRAPHY`, `ICON USAGE`, and `STANDARD LOGO`; pair them with normal-case body copy for readability.
 
 ## Pattern library
 
@@ -70,9 +84,10 @@ These are the required, opinionated slide patterns. The model decides which to u
 - Optional center arrow in orange
 
 ### 7. Key insight / callout
-- Centered card, ~70% slide width
+- Centered or slightly off-axis card, ~70% slide width
 - Background: navy, text white
-- Optional pull-quote orange mark (a stylized "7") at upper-left of card
+- Use one clear orange accent: a left border, bottom rule, small rounded triangle, or short accent bar
+- Do **not** use a typed/stylized `7` as a quote mark or decorative element; it looks like a misplaced fake logo
 - Used sparingly — one per ~5 slides
 
 ### 8. Recommendation slide
@@ -90,6 +105,33 @@ These are the required, opinionated slide patterns. The model decides which to u
 - White background
 - "Appendix" label muted, small
 - Plain list, navy text, monospace for paths/IDs
+
+### 11. Edge-strip editorial slide
+- White background
+- One vertical strip or block on the left/top-left in orange, blue, or navy
+- Large heading aligned to the strip; content sits in a wide column with generous whitespace
+- Good for mission statements, value propositions, section introductions, and brand voice slides
+- Keep the strip geometric and flat — no gradients, blur, or glass effects
+
+### 12. Rule-callout guideline slide
+- Large example on one side or center-left
+- 2–4 concise rule callouts arranged around it
+- Use thin blue or orange rules to separate / connect rule groups
+- Good for tagline, logo usage, install instructions, API contracts, and “do/don’t” constraints
+- Keep rule text short; split into more slides rather than shrinking text
+
+### 13. Triangle-bullet principle slide
+- Use rounded equilateral triangles as bullets beside a list of principles or factors
+- Rotate or recolor triangles across bullets when the list itself is the visual motif
+- Pair each principle with one short explanatory line
+- Good for values, factors, operating rules, and decision criteria
+- Never substitute generic icon sets for these bullets
+
+### 14. Color-block comparison slide
+- Use large flat color blocks to create sections, not decorative gradients
+- Orange and blue blocks work for opposing or sequential concepts; navy blocks work for emphasis or dark-mode moments
+- Put text on white/off-white cards when contrast over a color block would be marginal
+- Good for before/after, tradeoffs, brand palettes, and phased roadmaps
 
 ## When patterns conflict
 
