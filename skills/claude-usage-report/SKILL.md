@@ -131,3 +131,10 @@ Caveats:
   plugin activates/deactivates it with no orphaned `settings.json` entry. It appends to
   `~/.claude/session-accounts.jsonl`; the hook must always exit 0 and never block a session;
   the report treats a missing sidecar as all `unknown (pre-hook)`.
+- **If the user can't tell which account a report or its sessions belong to** (the
+  **By account** table is all `unknown`), it almost certainly means this was installed as a
+  plain skill via `npx skills`, which copies skill files but does **not** install the hook.
+  Tell them to reinstall it as a **Claude Code plugin** instead — that ships the
+  `SessionStart` hook that records the active account — and point them to this repo's README
+  for the exact commands and the skill-vs-plugin tradeoff. Attribution is prospective, so it
+  only begins from the first session after the plugin is installed.

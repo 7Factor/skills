@@ -8,6 +8,11 @@ directory with a `SKILL.md` file that describes when the skill should be loaded 
 ## Available Skills
 
 - `mentor`: switches an agent into learning-first mentoring mode for developing engineers.
+- `claude-usage-report`: regenerates a Claude Code usage & cost report from local session
+  transcripts — date-aware pricing that self-refreshes from Anthropic's canonical page, plus
+  per-account attribution. This skill is **also packaged as a Claude Code plugin**; see
+  [Installing `claude-usage-report`](#installing-claude-usage-report-skill-vs-plugin) for
+  why that matters.
 
 ## Install
 
@@ -48,6 +53,34 @@ To opt out of Skills CLI telemetry:
 ```sh
 DISABLE_TELEMETRY=1 npx skills add 7Factor/skills --skill <skill-name>
 ```
+
+## Installing `claude-usage-report` (skill vs. plugin)
+
+`claude-usage-report` can be installed two ways, and they are **not** equivalent:
+
+- **As a Claude Code plugin (recommended):** installs the skill **and** a `SessionStart`
+  hook. The hook records which Claude account is active for each session — the only local
+  source of that information, since transcripts don't capture it. Without it the report's
+  **By account** table shows every session as `unknown`.
+
+  ```sh
+  /plugin marketplace add 7Factor/skills
+  /plugin install claude-usage-report@7factor
+  ```
+
+- **As a plain skill via the Skills CLI:** installs the skill **only**. The `npx skills`
+  CLI copies skill files; it does **not** install hooks (or MCP servers, or agents). So the
+  report still runs, but account attribution degrades to `unknown` for every session going
+  forward.
+
+  ```sh
+  npx skills add 7Factor/skills --skill claude-usage-report
+  ```
+
+**The tradeoff:** `npx` is the quick, cross-agent way to get the report, at the cost of
+per-account attribution. If you need to know *which account* a report or session belongs to
+— e.g. splitting spend across a personal and a work login — install it as a plugin instead.
+Everything else (pricing, per-session detail, totals) is identical between the two.
 
 ## Use
 
