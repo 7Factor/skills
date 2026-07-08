@@ -8,11 +8,8 @@ directory with a `SKILL.md` file that describes when the skill should be loaded 
 ## Available Skills
 
 - `mentor`: switches an agent into learning-first mentoring mode for developing engineers.
-- `claude-usage-report`: regenerates a Claude Code usage & cost report from local session
-  transcripts — date-aware pricing that self-refreshes from Anthropic's canonical page, plus
-  per-account attribution. This skill is **also packaged as a Claude Code plugin**; see
-  [Installing `claude-usage-report`](#installing-claude-usage-report-skill-vs-plugin) for
-  why that matters.
+- `claude-usage-report`: reports Claude Code usage & cost from local session transcripts.
+  (For per-account attribution across multiple accounts, install as a plugin instead — [see below](#installing-claude-usage-report-skill-vs-plugin).)
 
 ## Install
 
