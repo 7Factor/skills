@@ -1,0 +1,151 @@
+{
+  "_comment": "Anthropic list prices, $/MTok. Fields: in=input, out=output, cw=5-minute cache write (1.25x input), cr=cache read (0.1x input). Each model has one or more records sorted by 'effective' date; the rate applied to a message is the record with the latest effective date <= that message's (UTC) day. This makes a report use the price in effect on the day being reported. Validate against current published pricing when generating a report and append a new dated record when a price changes (see SKILL.md). Known gap: if a price changes between two report runs, days billed before this file was updated will be costed at the older record.",
+  "models": {
+    "claude-fable-5": [
+      {
+        "effective": "2000-01-01",
+        "in": 10.0,
+        "out": 50.0,
+        "cw": 12.5,
+        "cr": 1.0
+      }
+    ],
+    "claude-opus-4-8": [
+      {
+        "effective": "2000-01-01",
+        "in": 5.0,
+        "out": 25.0,
+        "cw": 6.25,
+        "cr": 0.5
+      }
+    ],
+    "claude-opus-4-7": [
+      {
+        "effective": "2000-01-01",
+        "in": 5.0,
+        "out": 25.0,
+        "cw": 6.25,
+        "cr": 0.5
+      }
+    ],
+    "claude-opus-4-6": [
+      {
+        "effective": "2000-01-01",
+        "in": 5.0,
+        "out": 25.0,
+        "cw": 6.25,
+        "cr": 0.5
+      }
+    ],
+    "claude-sonnet-5": [
+      {
+        "effective": "2026-06-30",
+        "in": 2.0,
+        "out": 10.0,
+        "cw": 2.5,
+        "cr": 0.2,
+        "note": "introductory through 2026-08-31"
+      },
+      {
+        "effective": "2026-09-01",
+        "in": 3.0,
+        "out": 15.0,
+        "cw": 3.75,
+        "cr": 0.3,
+        "note": "standard"
+      }
+    ],
+    "claude-sonnet-4-6": [
+      {
+        "effective": "2000-01-01",
+        "in": 3.0,
+        "out": 15.0,
+        "cw": 3.75,
+        "cr": 0.3
+      }
+    ],
+    "claude-haiku-4-5": [
+      {
+        "effective": "2000-01-01",
+        "in": 1.0,
+        "out": 5.0,
+        "cw": 1.25,
+        "cr": 0.1
+      }
+    ],
+    "claude-mythos-5": [
+      {
+        "effective": "2026-07-07",
+        "in": 10.0,
+        "cw": 12.5,
+        "cw_1h": 20.0,
+        "cr": 1.0,
+        "out": 50.0
+      }
+    ],
+    "claude-opus-4-5": [
+      {
+        "effective": "2026-07-07",
+        "in": 5.0,
+        "cw": 6.25,
+        "cw_1h": 10.0,
+        "cr": 0.5,
+        "out": 25.0
+      }
+    ],
+    "claude-opus-4-1": [
+      {
+        "effective": "2026-07-07",
+        "in": 15.0,
+        "cw": 18.75,
+        "cw_1h": 30.0,
+        "cr": 1.5,
+        "out": 75.0
+      }
+    ],
+    "claude-opus-4": [
+      {
+        "effective": "2026-07-07",
+        "in": 15.0,
+        "cw": 18.75,
+        "cw_1h": 30.0,
+        "cr": 1.5,
+        "out": 75.0
+      }
+    ],
+    "claude-sonnet-4-5": [
+      {
+        "effective": "2026-07-07",
+        "in": 3.0,
+        "cw": 3.75,
+        "cw_1h": 6.0,
+        "cr": 0.3,
+        "out": 15.0
+      }
+    ],
+    "claude-sonnet-4": [
+      {
+        "effective": "2026-07-07",
+        "in": 3.0,
+        "cw": 3.75,
+        "cw_1h": 6.0,
+        "cr": 0.3,
+        "out": 15.0
+      }
+    ],
+    "claude-haiku-3-5": [
+      {
+        "effective": "2026-07-07",
+        "in": 0.8,
+        "cw": 1.0,
+        "cw_1h": 1.6,
+        "cr": 0.08,
+        "out": 4.0
+      }
+    ]
+  },
+  "_meta": {
+    "last_checked": "2026-07-07T16:38:34",
+    "source": "https://platform.claude.com/docs/en/about-claude/pricing.md"
+  }
+}

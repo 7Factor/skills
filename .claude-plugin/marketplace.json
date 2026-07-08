@@ -1,0 +1,19 @@
+{
+  "name": "7factor",
+  "owner": {
+    "name": "7Factor Software"
+  },
+  "metadata": {
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "claude-usage-report",
+      "source": "./plugins/claude-usage-report",
+      "skills": [
+        "./skills/claude-usage-report"
+      ],
+      "description": "Usage/cost reports with self-refreshing pricing and per-account attribution."
+    }
+  ]
+}

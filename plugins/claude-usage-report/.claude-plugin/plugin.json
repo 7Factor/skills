@@ -1,0 +1,6 @@
+{
+  "name": "claude-usage-report",
+  "version": "1.0.0",
+  "description": "Date-aware Claude Code usage/cost reports from local transcripts, with self-refreshing pricing and per-account attribution.",
+  "author": { "name": "Scott Pfister" }
+}
