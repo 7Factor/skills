@@ -13,6 +13,16 @@ is supporting detail whose depth scales down as the session count grows.
 
 ## Steps
 
+0. **Verify Python 3 is available** before anything else — every script here needs it.
+   Run `python3 --version` (fall back to `python --version`; on Windows `py -3 --version`).
+   If none reports a 3.x version, **stop and tell the user**, e.g.:
+   > This skill needs Python 3, which isn't on your PATH. Install it and re-run:
+   > • macOS: `brew install python3`  • Debian/Ubuntu: `sudo apt install python3`
+   > • Windows: from https://python.org (the installer adds the `py` launcher)  • other: https://python.org/downloads
+
+   Do not attempt the report without a working Python 3 — the parser can't run and every
+   number depends on it.
+
 1. **Run the parser** (`usage_report.py`, in this skill's directory) for the requested
    period:
    ```
@@ -116,6 +126,13 @@ Caveats:
   before the plugin was installed show as `unknown (pre-hook)`, and a mid-session account
   switch that skips a resume may be missed. The authoritative per-account figure is the
   Anthropic Console.
+- **If accounts show `unknown` but the plugin is installed** (not the npx-skill-only case),
+  the `SessionStart` hook is silently failing — almost always because Python 3 wasn't on
+  PATH when a session started (the hook exits 0 by design, so it never announces this).
+  Verify with `python3 --version`, confirm `~/.claude/session-accounts.jsonl` is being
+  appended to on new sessions, and if Python 3 is missing, tell the user how to install it
+  (see Step 0). Attribution is prospective — it only starts from the next session after the
+  fix.
 - Not visible here: usage on claude.ai web/desktop, on other machines, or per-call
   server-side tool charges (web_search/web_fetch).
 ```
