@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/record_account.py\""
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/record_account.sh\""
           }
         ]
       }

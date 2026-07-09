@@ -2,6 +2,7 @@
 name: claude-usage-report
 description: Regenerate a Claude Code usage/cost report for a date or period.
 disable-model-invocation: true
+compatibility: Designed for Claude Code (reads its local transcripts; per-account attribution needs the plugin's SessionStart hook). Requires Python 3.
 ---
 
 # claude-usage-report
@@ -110,7 +111,8 @@ Caveats:
 - Cache-write assumes the 5-minute TTL (1.25× input); a 1-hour TTL would be 2× input.
 - Opus's 1M-context (`[1m]`) runs bill at standard rates; there is no >200K premium tier.
 - Account attribution comes from this plugin's `SessionStart` hook (`hooks/hooks.json` →
-  `record_account.py` → `~/.claude/session-accounts.jsonl`) and is prospective: sessions
+  `record_account.sh` → `record_account.py` → `~/.claude/session-accounts.jsonl`) and is
+  prospective: sessions
   before the plugin was installed show as `unknown (pre-hook)`, and a mid-session account
   switch that skips a resume may be missed. The authoritative per-account figure is the
   Anthropic Console.
@@ -126,11 +128,14 @@ Caveats:
   Anthropic's canonical page by `update_pricing.py`. Never hardcode a rate in the parser.
   Hand-edit `prices.json` only in the agent-repair tier (step 2) or to pre-enter a known
   future price; the updater preserves records it didn't write.
-- Account attribution is fed by the `SessionStart` hook `record_account.py`, declared in
-  this plugin's `hooks/hooks.json` via `${CLAUDE_PLUGIN_ROOT}` — so installing/removing the
-  plugin activates/deactivates it with no orphaned `settings.json` entry. It appends to
-  `~/.claude/session-accounts.jsonl`; the hook must always exit 0 and never block a session;
-  the report treats a missing sidecar as all `unknown (pre-hook)`.
+- Account attribution is fed by the `SessionStart` hook, declared in this plugin's
+  `hooks/hooks.json` via `${CLAUDE_PLUGIN_ROOT}` — so installing/removing the plugin
+  activates/deactivates it with no orphaned `settings.json` entry. The hook runs
+  `record_account.sh`, a wrapper that resolves a Python 3 interpreter (`python3` → `python`
+  if v3 → `py -3`) before handing off to `record_account.py`; if none is found it exits 0
+  silently so a session is never blocked or errored (just unattributed). The script appends
+  to `~/.claude/session-accounts.jsonl`; the report treats a missing sidecar as all
+  `unknown (pre-hook)`.
 - **If the user can't tell which account a report or its sessions belong to** (the
   **By account** table is all `unknown`), it almost certainly means this was installed as a
   plain skill via `npx skills`, which copies skill files but does **not** install the hook.
