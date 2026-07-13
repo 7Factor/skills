@@ -1,2 +1,4 @@
 .idea/
 .air/plans
+__pycache__/
+*.pyc
