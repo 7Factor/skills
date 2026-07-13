@@ -13,15 +13,27 @@ is supporting detail whose depth scales down as the session count grows.
 
 ## Steps
 
-0. **Verify Python 3 is available** before anything else — every script here needs it.
-   Run `python3 --version` (fall back to `python --version`; on Windows `py -3 --version`).
-   If none reports a 3.x version, **stop and tell the user**, e.g.:
-   > This skill needs Python 3, which isn't on your PATH. Install it and re-run:
-   > • macOS: `brew install python3`  • Debian/Ubuntu: `sudo apt install python3`
-   > • Windows: from https://python.org (the installer adds the `py` launcher)  • other: https://python.org/downloads
+0. **Ensure a Python 3 runtime** before anything else — every script here needs one. Work
+   down this list and use the first that's available; substitute it for `python3` in every
+   command below.
+   1. **Local interpreter** (preferred): `python3` — or `python` if `python --version`
+      reports 3.x, or `py -3` on Windows.
+   2. **Docker** (fallback, when no local Python 3 but `docker` is available): run the
+      scripts in an ephemeral container, mounting the user's home so the scripts read the
+      same `~/.claude/...` transcripts and write the report to the same `~/`:
+      ```
+      docker run --rm -e HOME="$HOME" -v "$HOME:$HOME" -w "$HOME" \
+        --user "$(id -u):$(id -g)" python:3-slim python <script> <args>
+      ```
+      Default networking lets pricing refresh reach Anthropic's page. The first run pulls
+      the `python:3-slim` image — tell the user that's expected, then it's cached.
+   3. **Neither available** → stop and tell the user, e.g.:
+      > This skill needs Python 3 (or Docker). Install one and re-run:
+      > • macOS: `brew install python3`  • Debian/Ubuntu: `sudo apt install python3`
+      > • Windows: from https://python.org (adds the `py` launcher)  • Docker: https://docs.docker.com/get-docker/
 
-   Do not attempt the report without a working Python 3 — the parser can't run and every
-   number depends on it.
+   Do not attempt the report without one of these — the parser can't run and every number
+   depends on it.
 
 1. **Run the parser** (`usage_report.py`, in this skill's directory) for the requested
    period:
