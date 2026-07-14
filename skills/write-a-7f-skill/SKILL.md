@@ -43,14 +43,16 @@ This gate is complete when Matt's current or legacy guidance is active, or the u
    included field changes discovery, execution, compatibility, permissions, or presentation for a known consumer, and
    the target validator accepts it.
 4. Decide whether deterministic or repeated operations justify bundled scripts. When they do, apply the entire
-   immutable-host standard below before writing them. This step is complete when each script has one documented runner
-   with a verified local probe and Docker fallback.
-5. Create or edit only the files the skill needs. Test bundled scripts by executing their runner, and update any
-   generated agent metadata only when the skill owns it. This step is complete when no placeholders or unused resources
-   remain and every changed file contributes to the skill.
-6. Validate the skill with the repository's validator when available, inspect the final diff, and test every accessible
-   execution branch. This step is complete when validation passes, every rule in this skill has been applied, and any
-   environment path that could not be tested is reported as a blocker rather than assumed to work.
+   immutable-host standard below before writing them. This step is complete when each script has one documented
+   dispatch flow with a verified local probe and Docker fallback, callable from POSIX and native Windows command
+   environments without depending on the runtime being probed.
+5. Create or edit only the files the skill needs. Test bundled scripts through their documented dispatch flow, and
+   update any generated agent metadata only when the skill owns it. This step is complete when no placeholders or
+   unused resources remain and every changed file contributes to the skill.
+6. Validate the skill with the repository's validator when available, inspect the final diff, and test every execution
+   branch in POSIX and native Windows command environments locally or in CI. This step is complete when validation
+   passes, every rule in this skill has been applied, and any portable execution path that could not be tested is
+   reported as a blocker rather than assumed to work.
 
 ## Frontmatter standard
 
@@ -79,6 +81,15 @@ Treat the user's host as immutable. Execute with dependencies that are already a
 Package managers, runtime managers, virtual environments, shell profiles, `PATH`, and system configuration on the host
 remain untouched. The sole exception is a skill whose declared purpose is to install or configure the host environment.
 
+### Portable dispatch
+
+Issue runtime probes and Docker commands through the command environment already available to the agent. The dispatcher
+must not depend on the runtime it probes and must be callable from both a POSIX shell and a native Windows command
+environment.
+
+For agent-invoked scripts, put the dispatch flow in the skill body so the agent can adapt its syntax to the current
+command environment. Hooks and other automatic entry points need launchers callable from both environments.
+
 ### Classify the runtime
 
 - **Simple**: a runtime plus its standard library, or another small dependency set already supplied by one trusted base
@@ -88,7 +99,9 @@ remain untouched. The sole exception is a skill whose declared purpose is to ins
 
 ### Simple runtime
 
-1. Add a non-mutating probe for the exact executable, supported version, and any required capability.
+1. From the portable dispatcher, directly execute a non-mutating probe for the exact runtime, supported version,
+   required capabilities, and intended script invocation. For Bash, launch `bash -c "exit 0"` and syntax-check the
+   script with `bash -n path/to/script.sh`; executable discovery alone is not a complete probe.
 2. Use the local runtime only when the complete probe passes.
 3. Otherwise, verify both the Docker client and daemon, then run the script in a named official or otherwise trusted
    image pinned to a version and preferably an immutable digest.
@@ -100,23 +113,26 @@ remain untouched. The sole exception is a skill whose declared purpose is to ins
 1. Probe every runtime, executable, library, and material capability without changing the host. A small import or
    execution smoke test is stronger than version checks alone.
 2. Use the local path only when the whole probe passes; otherwise use Docker.
-3. For a private or unpublished image, include a Dockerfile, locked dependency inputs, and one runner such as
-   `scripts/run` that performs the probe and fallback. Pin the base image by digest and dependencies as tightly as the
-   ecosystem permits.
-4. Build the fallback image through that runner on every Docker execution. Let Docker's content cache make unchanged
-   builds cheap and invalidate layers when the Dockerfile or locked inputs change. Prefer mounting the current scripts
-   into an environment-only image; then script changes take effect immediately without rebuilding the environment. If
-   scripts are copied into the image, the always-build runner must include them in the build context.
+3. For a private or unpublished image, include a Dockerfile, locked dependency inputs, and one dispatcher, expressed
+   through portable launchers where necessary, that performs the probe and fallback. Pin the base image by digest
+   and dependencies as tightly as the ecosystem permits.
+4. Build the fallback image through that dispatcher on every Docker execution. Let Docker's content cache make
+   unchanged builds cheap and invalidate layers when the Dockerfile or locked inputs change. Prefer mounting the
+   current scripts into an environment-only image; then script changes take effect immediately without rebuilding the
+   environment. If scripts are copied into the image, the always-build dispatcher must include them in the build
+   context.
 5. For a public skill, prefer a published multi-architecture environment image from a trusted registry, referenced by
    immutable digest. Publish a new image when the Dockerfile or locked environment inputs change, then update the
-   digest in the runner. Mount the skill's current scripts rather than baking them into the image when practical.
+   digest in the dispatcher. Mount the skill's current scripts rather than baking them into the image when practical.
 6. Use Docker Compose only when the runtime genuinely needs multiple containers, networks, or persistent services. For
-   a single script environment, a runner around `docker build` and `docker run` is the smaller contract. When Compose
-   is justified, have the runner build before `run` or `up`, or reference published images by immutable digest.
+   a single script environment, a dispatcher around `docker build` and `docker run` is the smaller contract. When
+   Compose is justified, have the dispatcher build before `run` or `up`, or reference published images by immutable
+   digest.
 
 ### Container contract
 
-- Route every script invocation through the same runner so the local probe and fallback cannot drift.
+- Route every script invocation through the same documented dispatch flow so the local probe and fallback cannot drift.
+  Launcher syntax may differ between command environments, but each entry point must implement that same flow.
 - Use `--rm`, least-privilege settings, a non-root user when practical, and only the exact mounts required for inputs
   and outputs. Avoid privileged mode, the host Docker socket, and broad home-directory mounts.
 - State the image reference, required mounts, inputs, outputs, supported architectures, and failure message in the
