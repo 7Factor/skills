@@ -43,9 +43,9 @@ This gate is complete when Matt's current or legacy guidance is active, or the u
    included field changes discovery, execution, compatibility, permissions, or presentation for a known consumer, and
    the target validator accepts it.
 4. Decide whether deterministic or repeated operations justify bundled scripts. When they do, apply the entire
-   immutable-host standard below before writing them. This step is complete when each script has one documented
-   dispatch flow with a verified local probe and Docker fallback, callable from POSIX and native Windows command
-   environments without depending on the runtime being probed.
+   immutable-host standard below before writing them. This step is complete when each scripted operation has one
+   documented portable dispatch flow using one execution strategy below. The flow is callable from POSIX and native
+   Windows command environments without depending on the runtime being probed.
 5. Create or edit only the files the skill needs. Test bundled scripts through their documented dispatch flow, and
    update any generated agent metadata only when the skill owns it. This step is complete when no placeholders or
    unused resources remain and every changed file contributes to the skill.
@@ -83,25 +83,39 @@ remain untouched. The sole exception is a skill whose declared purpose is to ins
 
 ### Portable dispatch
 
-Issue runtime probes and Docker commands through the command environment already available to the agent. The dispatcher
-must not depend on the runtime it probes and must be callable from both a POSIX shell and a native Windows command
-environment.
+Use the command environment already available to the agent as routing input. Select a matching native implementation
+before probing, and probe only the runtime and capabilities that branch needs. When no native branch exists, issue the
+local-runtime and Docker probes through the current command environment. The dispatcher must not depend on the runtime
+it probes and must be callable from both a POSIX shell and a native Windows command environment.
 
-For agent-invoked scripts, put the dispatch flow in the skill body so the agent can adapt its syntax to the current
-command environment. Hooks and other automatic entry points need launchers callable from both environments.
+For agent-invoked scripts, put branch selection in the skill body. Hooks and other automatic entry points need
+launchers callable from both environments.
 
-### Classify the runtime
+### Select the execution strategy
 
-- **Simple**: a runtime plus its standard library, or another small dependency set already supplied by one trusted base
-  image.
-- **Complex**: language packages, native libraries, external executables such as Graphviz or FFmpeg, services, compiled
-  extensions, or a dependency set whose installation varies by platform.
+- **Native pair**: a dependency-free operation whose equivalent `.sh` and `.ps1` implementations remain small and
+  maintainable against one behavior contract.
+- **Simple runtime**: a runtime plus its standard library, or another small dependency set already supplied by one
+  trusted base image.
+- **Complex runtime**: language packages, native libraries, external executables such as Graphviz or FFmpeg, services,
+  compiled extensions, or a dependency set whose installation varies by platform.
+
+### Native pair
+
+1. Bundle equivalent `.sh` and `.ps1` implementations for POSIX and native Windows command environments, respectively.
+   Use a thin `.cmd` PowerShell launcher when an automatic entry point requires CMD.
+2. Give both implementations one documented contract for arguments, inputs, outputs, standard streams, exit codes, and
+   side effects. Keep this contract as their single source of truth.
+3. Select the implementation from the current command environment. Probe only capabilities used by that implementation,
+   preferring a non-mutating script self-test over shell discovery or a no-op runtime check.
+4. Treat a native pair as complete without Docker. Reclassify the operation as simple or complex when equivalent native
+   implementations would be substantial, divergent, or impractical to maintain.
 
 ### Simple runtime
 
-1. From the portable dispatcher, directly execute a non-mutating probe for the exact runtime, supported version,
-   required capabilities, and intended script invocation. For Bash, launch `bash -c "exit 0"` and syntax-check the
-   script with `bash -n path/to/script.sh`; executable discovery alone is not a complete probe.
+1. After the portable dispatcher selects this path, directly execute a non-mutating probe for the exact runtime,
+   supported version, required capabilities, and intended script invocation. Prefer the script's dry run or self-test
+   over executable discovery or a no-op runtime check.
 2. Use the local runtime only when the complete probe passes.
 3. Otherwise, verify both the Docker client and daemon, then run the script in a named official or otherwise trusted
    image pinned to a version and preferably an immutable digest.
