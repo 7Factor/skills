@@ -157,10 +157,13 @@ strategy's definition.
    Compose is justified, have the dispatcher build before `run` or `up`, or reference published images by immutable
    digest.
 
-### Container contract
+### Container fallback contract
 
-- Route every script invocation through the same documented dispatch flow so the local probe and fallback cannot drift.
-  Launcher syntax may differ between command environments, but each entry point must implement that same flow.
+This contract applies only to simple and complex strategies with a Docker fallback.
+
+- Route every invocation of a container-backed strategy through the same documented dispatch flow so the local probe
+  and fallback cannot drift. Launcher syntax may differ between command environments, but each entry point must
+  implement that same flow.
 - Use `--rm`, least-privilege settings, a non-root user when practical, and only the exact mounts required for inputs
   and outputs. Avoid privileged mode, the host Docker socket, and broad home-directory mounts.
 - State the image reference, required mounts, inputs, outputs, supported architectures, and failure message in the
