@@ -101,8 +101,8 @@ launchers callable from both environments.
 Choose the first applicable strategy in order. Later strategies handle operations that do not meet an earlier
 strategy's definition.
 
-- **Native pair**: a dependency-free operation whose equivalent `.sh` and `.ps1` implementations remain small and
-  maintainable against one behavior contract.
+- **Native pair**: a dependency-free operation whose equivalent `.sh` and `.ps1` implementations remain small,
+  maintainable, and limited to declared native baselines under one behavior contract.
 - **Simple runtime**: a runtime plus its standard library, or another small dependency set already supplied by one
   trusted base image.
 - **Complex runtime**: language packages, native libraries, external executables such as Graphviz or FFmpeg, services,
@@ -112,12 +112,16 @@ strategy's definition.
 
 1. Bundle equivalent `.sh` and `.ps1` implementations for POSIX and native Windows command environments, respectively.
    Use a thin `.cmd` PowerShell launcher when an automatic entry point requires CMD.
-2. Give both implementations one documented contract for arguments, inputs, outputs, standard streams, exit codes, and
+2. Declare each implementation's interpreter, minimum version, and required capabilities. Treat shell built-ins,
+   standard APIs, and executables guaranteed by those baselines as native; classify every other executable as a
+   dependency.
+3. Give both implementations one documented contract for arguments, inputs, outputs, standard streams, exit codes, and
    side effects. Keep this contract as their single source of truth.
-3. Select the implementation from the current command environment. Probe only capabilities used by that implementation,
-   preferring a non-mutating script self-test over shell discovery or a no-op runtime check.
-4. Treat a native pair as complete without Docker. Reclassify the operation as simple or complex when equivalent native
-   implementations would be substantial, divergent, or impractical to maintain.
+4. Select the implementation from the current command environment. Probe its declared baseline, preferring a
+   non-mutating script self-test over shell discovery or a no-op runtime check.
+5. Treat a native pair as complete without Docker. Reclassify the operation as simple or complex when either
+   implementation exceeds its native baseline or equivalent implementations would be substantial, divergent, or
+   impractical to maintain.
 
 ### Simple runtime
 
