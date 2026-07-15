@@ -88,10 +88,12 @@ remain untouched. The sole exception is a skill whose declared purpose is to ins
 
 ### Portable dispatch
 
-Use the command environment already available to the agent as routing input. Select a matching native implementation
-before probing, and probe only the runtime and capabilities that branch needs. When no native branch exists, issue the
-local-runtime and Docker probes through the current command environment. The dispatcher must not depend on the runtime
-it probes and must be callable from both a POSIX shell and a native Windows command environment.
+Use the host execution context already reported to the agent as routing input. Map macOS, Linux, and WSL to the POSIX
+branch and native Windows to the Windows branch, regardless of the active shell. If the context is unknown, identify it
+with a non-mutating host query before routing. After selecting a branch, probe only the runtime and capabilities that
+branch needs. When no native branch exists, issue the local-runtime and Docker probes through the current command
+environment. The dispatcher must not depend on the runtime it probes and must be callable from both a POSIX shell and a
+native Windows command environment.
 
 For agent-invoked scripts, put branch selection in the skill body. Hooks and other automatic entry points need
 launchers callable from both environments.
@@ -117,8 +119,8 @@ strategy's definition.
    dependency.
 3. Give both implementations one documented contract for arguments, inputs, outputs, standard streams, exit codes, and
    side effects. Keep this contract as their single source of truth.
-4. Select the implementation from the current command environment. Probe its declared baseline, preferring a
-   non-mutating script self-test over shell discovery or a no-op runtime check.
+4. Run the implementation selected by the portable dispatcher. Probe its declared baseline, preferring a non-mutating
+   script self-test over shell discovery or a no-op runtime check.
 5. Treat a native pair as complete without Docker. Reclassify the operation as simple or complex when either
    implementation exceeds its native baseline or equivalent implementations would be substantial, divergent, or
    impractical to maintain.
