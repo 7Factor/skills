@@ -98,6 +98,9 @@ launchers callable from both environments.
 
 ### Select the execution strategy
 
+Choose the first applicable strategy in order. Later strategies handle operations that do not meet an earlier
+strategy's definition.
+
 - **Native pair**: a dependency-free operation whose equivalent `.sh` and `.ps1` implementations remain small and
   maintainable against one behavior contract.
 - **Simple runtime**: a runtime plus its standard library, or another small dependency set already supplied by one
