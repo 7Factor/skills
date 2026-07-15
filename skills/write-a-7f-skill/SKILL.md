@@ -1,12 +1,12 @@
 ---
 name: write-a-7f-skill
-description: Write or revise a 7Factor Software agent skill using Matt Pocock's skill-writing discipline and 7Factor's immutable-host script standard.
+description: Write or revise a portable 7Factor Software agent skill using Matt Pocock's skill-writing discipline and 7Factor's immutable-host script standard.
 compatibility: Requires filesystem access and a client supporting Claude-compatible manual skill invocation; best with /writing-great-skills installed.
 argument-hint: "[skill request]"
 disable-model-invocation: true
 ---
 
-# Write a 7Factor Skill
+# Write a Portable 7Factor Skill
 
 ## Load the craft discipline
 
@@ -30,6 +30,12 @@ hierarchy, completion criteria, progressive disclosure, leading words, and pruni
 
 This gate is complete when Matt's current or legacy guidance is active, or the user has explicitly declined it.
 
+## Portability invariant
+
+Every skill this workflow creates has a portable core. Keep all required behavior in the portable Agent Skills body and
+express it in client-neutral terms. Consumer-specific fields, tools, hooks, and commands may add optional enhancements;
+the core result remains available through the portable body alone.
+
 ## Author the skill
 
 1. Read the request, repository instructions, neighboring skills, and the existing target before asking questions.
@@ -39,9 +45,8 @@ This gate is complete when Matt's current or legacy guidance is active, or the u
 2. Design the skill with the active Matt guidance. Keep steps and their checkable completion criteria in `SKILL.md`;
    disclose branch-specific reference behind explicit context pointers; remove duplication, sediment, and no-ops. This
    step is complete when every instruction has one authoritative home and every branch is reachable.
-3. Select frontmatter from the target agent's current schema using the standard below. This step is complete when every
-   included field changes discovery, execution, compatibility, permissions, or presentation for a known consumer, and
-   the target validator accepts it.
+3. Select frontmatter using the standard below. This step is complete when every included field changes discovery,
+   execution, compatibility, permissions, or presentation for a known consumer, and every target validator accepts it.
 4. Decide whether deterministic or repeated operations justify bundled scripts. When they do, apply the entire
    immutable-host standard below before writing them. This step is complete when each scripted operation has one
    documented portable dispatch flow using one execution strategy below. The flow is callable from POSIX and native
@@ -64,8 +69,8 @@ documentation for extensions; never infer support from another agent's parser.
   `allowed-tools` only when the field has a concrete consumer. Use `compatibility` for intended products, required
   local runtimes, Docker alternatives, system packages, architecture, and network access. Most skills need no
   compatibility declaration.
-- For a cross-agent skill, keep required behavior in the portable body. Treat implementation-specific fields as
-  optional enhancements, and verify strict target validators accept them.
+- Keep required behavior in the portable body. Treat implementation-specific fields as optional enhancements, and
+  verify strict target validators accept them.
 - For a Claude-targeted skill, consult the current
   [Claude Code skill frontmatter reference](https://code.claude.com/docs/en/slash-commands). Consider invocation fields
   (`disable-model-invocation`, `user-invocable`), arguments (`argument-hint`, `arguments`), permissions
