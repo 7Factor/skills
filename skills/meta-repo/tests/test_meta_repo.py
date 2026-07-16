@@ -22,6 +22,7 @@ import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from unittest import mock
 
 # ----------------------------------------------------------------------------
 # load the hyphenated engine as a module
@@ -117,6 +118,20 @@ class TestSymlinkHelpers(unittest.TestCase):
     def test_ensure_symlink_conflict_on_real_file(self):
         (self.tmp / "api").mkdir()
         self.assertEqual(mod.ensure_symlink(self.tmp, "api", "../api"), "conflict")
+
+    def test_ensure_symlink_actionable_error_when_unsupported(self):
+        # Simulate native Windows without symlink privilege (OSError 1314): the engine
+        # must exit with an actionable message pointing at WSL/POSIX, not a raw traceback.
+        err = io.StringIO()
+        with mock.patch.object(Path, "symlink_to",
+                               side_effect=OSError(1314, "A required privilege is not held by the client")):
+            with self.assertRaises(SystemExit) as cm, redirect_stderr(err):
+                mod.ensure_symlink(self.tmp, "api", "../api")
+        self.assertEqual(cm.exception.code, 1)
+        msg = err.getvalue().lower()
+        self.assertIn("symlink", msg)
+        self.assertTrue(any(w in msg for w in ("wsl", "windows", "posix")),
+                        f"message not actionable about platform: {msg!r}")
 
     def test_discover_symlinks_only_member_shaped(self):
         # H2: only relative `..`-prefixed links count as member wiring

@@ -30,7 +30,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-META_REPO_VERSION = "0.6.0"
+META_REPO_VERSION = "0.7.0"
 YAML_NAME = "meta-repo.yaml"
 GITIGNORE_START = "# meta-repo:start (managed — edits between markers may be overwritten)"
 GITIGNORE_END = "# meta-repo:end"
@@ -400,6 +400,18 @@ def vendored_version(root: Path) -> str | None:
 # ----------------------------------------------------------------------------
 # symlink management
 # ----------------------------------------------------------------------------
+def _make_symlink(lp: Path, rel_path: str) -> None:
+    """Create a member symlink, failing loudly (not with a traceback) where the OS
+    won't allow it — chiefly native Windows without Developer Mode/admin, where the
+    whole POSIX-symlink model doesn't apply. WSL or any POSIX host is the fix."""
+    try:
+        lp.symlink_to(rel_path)
+    except OSError as e:
+        die(f"could not create the member symlink '{lp.name}' -> {rel_path}: {e}. "
+            "meta-repo wires members with POSIX relative symlinks; native Windows needs "
+            "Developer Mode or admin to create them — run this under WSL or a POSIX shell.")
+
+
 def ensure_symlink(root: Path, name: str, rel_path: str) -> str:
     lp = link_path(root, name)
     if lp.is_symlink():
@@ -408,11 +420,11 @@ def ensure_symlink(root: Path, name: str, rel_path: str) -> str:
         if os.path.normpath(os.readlink(lp)) == os.path.normpath(rel_path):
             return "ok"
         lp.unlink()
-        lp.symlink_to(rel_path)
+        _make_symlink(lp, rel_path)
         return "fixed"
     if lp.exists():
         return "conflict"  # a real file/dir occupies the name
-    lp.symlink_to(rel_path)
+    _make_symlink(lp, rel_path)
     return "created"
 
 
