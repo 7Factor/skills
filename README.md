@@ -11,6 +11,8 @@ directory with a `SKILL.md` file that describes when the skill should be loaded 
 - `meta-repo`: create, maintain, and work inside meta-repos — lightweight git repos that wire several
   independent repos together with relative symlinks. Bundles a stdlib-only Python engine (teammates need
   only `python3`, no install).
+- `claude-usage-report`: reports Claude Code usage & cost from local session transcripts.
+  (For per-account attribution across multiple accounts, install as a plugin instead — [see below](#installing-claude-usage-report-skill-vs-plugin).)
 
 ## Install
 
@@ -51,6 +53,34 @@ To opt out of Skills CLI telemetry:
 ```sh
 DISABLE_TELEMETRY=1 npx skills add 7Factor/skills --skill <skill-name>
 ```
+
+## Installing `claude-usage-report` (skill vs. plugin)
+
+`claude-usage-report` can be installed two ways, and they are **not** equivalent:
+
+- **As a Claude Code plugin (recommended):** installs the skill **and** a `SessionStart`
+  hook. The hook records which Claude account is active for each session — the only local
+  source of that information, since transcripts don't capture it. Without it the report's
+  **By account** table shows every session as `unknown`.
+
+  ```sh
+  /plugin marketplace add 7Factor/skills
+  /plugin install claude-usage-report@7factor
+  ```
+
+- **As a plain skill via the Skills CLI:** installs the skill **only**. The `npx skills`
+  CLI copies skill files; it does **not** install hooks (or MCP servers, or agents). So the
+  report still runs, but account attribution degrades to `unknown` for every session going
+  forward.
+
+  ```sh
+  npx skills add 7Factor/skills --skill claude-usage-report
+  ```
+
+**The tradeoff:** `npx` is the quick, cross-agent way to get the report, at the cost of
+per-account attribution. If you need to know *which account* a report or session belongs to
+— e.g. splitting spend across a personal and a work login — install it as a plugin instead.
+Everything else (pricing, per-session detail, totals) is identical between the two.
 
 ## Use
 
