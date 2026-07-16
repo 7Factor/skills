@@ -30,7 +30,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-META_REPO_VERSION = "0.5.0"
+META_REPO_VERSION = "0.6.0"
 YAML_NAME = "meta-repo.yaml"
 GITIGNORE_START = "# meta-repo:start (managed — edits between markers may be overwritten)"
 GITIGNORE_END = "# meta-repo:end"
@@ -151,7 +151,9 @@ def default_branch(path: Path) -> str:
     ref = _git(["symbolic-ref", "refs/remotes/origin/HEAD"], path)
     if ref:
         return ref.rsplit("/", 1)[-1]
-    return _git(["rev-parse", "--abbrev-ref", "HEAD"], path) or "main"
+    local = _git(["rev-parse", "--abbrev-ref", "HEAD"], path)
+    # "HEAD" here means detached — not a real branch name; never leak it into the roster.
+    return local if local and local != "HEAD" else "main"
 
 
 def current_branch(path: Path) -> str:
@@ -401,7 +403,9 @@ def vendored_version(root: Path) -> str | None:
 def ensure_symlink(root: Path, name: str, rel_path: str) -> str:
     lp = link_path(root, name)
     if lp.is_symlink():
-        if os.readlink(lp) == rel_path:
+        # Compare normalized targets so cosmetic spellings (../api vs ../api/) don't
+        # churn a relink every run and defeat idempotency.
+        if os.path.normpath(os.readlink(lp)) == os.path.normpath(rel_path):
             return "ok"
         lp.unlink()
         lp.symlink_to(rel_path)
@@ -413,12 +417,23 @@ def ensure_symlink(root: Path, name: str, rel_path: str) -> str:
 
 
 def discover_symlinks(root: Path) -> dict[str, str]:
-    """name -> target for symlinks in root that point at sibling dirs."""
+    """name -> target for symlinks in root that look like member wiring.
+
+    Member symlinks are always relative and point at a sibling (`../name`) per the
+    canonical layout. Restricting discovery to that shape keeps the engine from
+    treating a user's own symlink (absolute, or pointing outside the parent) as an
+    orphan member — and, crucially, keeps `heal` from removing it. A dangling member
+    link still matches (its `../name` target just isn't cloned yet), so orphan and
+    broken-member detection are unaffected.
+    """
     out = {}
     for child in root.iterdir():
-        if child.is_symlink():
-            target = os.readlink(child)
-            out[child.name] = target
+        if not child.is_symlink():
+            continue
+        target = os.readlink(child)
+        if os.path.isabs(target) or not os.path.normpath(target).startswith(".."):
+            continue
+        out[child.name] = target
     return out
 
 
@@ -499,6 +514,13 @@ def cmd_add(args):
         if r.returncode != 0:
             die("git clone failed.")
 
+    # A real (non-symlink) file/dir squatting the member name blocks the symlink.
+    # Detect it BEFORE writing yaml/.gitignore so a conflict can't leave the roster
+    # half-written with no symlink on disk.
+    lp = link_path(root, name)
+    if lp.exists() and not lp.is_symlink():
+        die(f"a real file/dir named '{name}' occupies the meta-repo root; resolve it manually, then re-run `add`.")
+
     entry = {"name": name, "path": rel, "role": args.role or "", "status": args.status or "active"}
     if md.is_dir() and is_git_repo(md):
         entry["remote"] = args.remote or remote_url(md)
@@ -509,7 +531,18 @@ def cmd_add(args):
     # upsert
     existing = next((r for r in data["repositories"] if r["name"] == name), None)
     if existing:
-        existing.update({k: v for k, v in entry.items() if v not in (None, "")})
+        # Overwrite path + any captured remote/branch; honor an explicit --role/--status
+        # (including --role "" to clear it) while leaving unspecified fields untouched —
+        # never clobber existing values with argparse defaults.
+        updates = {"path": rel}
+        for k in ("remote", "default_branch"):
+            if k in entry:
+                updates[k] = entry[k]
+        if args.role is not None:
+            updates["role"] = args.role
+        if args.status:
+            updates["status"] = args.status
+        existing.update(updates)
         info(f"Updated member '{name}'.")
     else:
         data["repositories"].append(entry)
@@ -745,13 +778,12 @@ def cmd_doctor(args):
         if not rel:
             structural.append(f"{name}: no path declared")
         elif md and not md.exists():
+            # A dangling symlink here is just a symptom of the missing clone — report
+            # the clone once, not also as a separate "broken symlink" line.
             structural.append(f"{name}: missing on disk"
                               + (" — `sync` will clone it" if r.get("remote") else " and NO remote recorded"))
-        if not lp.is_symlink() and not (lp.exists()):
-            structural.append(f"{name}: symlink missing — run `sync`")
-        elif lp.is_symlink() and not lp.exists():
-            (structural if name in declared and (root / rel).exists() is False and r.get("remote")
-             else hygiene).append(f"{name}: broken symlink")
+        elif not (lp.is_symlink() and lp.exists()):
+            structural.append(f"{name}: symlink missing or broken — run `sync`")
         if md and md.is_dir() and is_git_repo(md):
             cb = current_branch(md)
             if cb and r.get("default_branch") and cb != r["default_branch"]:
@@ -951,6 +983,10 @@ def build_parser():
 
 def main(argv=None):
     args = build_parser().parse_args(argv)
+    # Every command shells out to git; fail with a clear message rather than an
+    # uncaught FileNotFoundError from a raw subprocess spawn (init/clone).
+    if shutil.which("git") is None:
+        die("`git` was not found on PATH — the engine needs it. Install git (or fix PATH) and retry.")
     args.func(args)
 
 
