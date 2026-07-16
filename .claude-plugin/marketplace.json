@@ -6,7 +6,12 @@
   "plugins": [
     {
       "name": "claude-usage-report",
-      "source": "./skills/claude-usage-report",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/7Factor/skills.git",
+        "path": "skills/claude-usage-report",
+        "ref": "main"
+      },
       "skills": [
         "."
       ],
