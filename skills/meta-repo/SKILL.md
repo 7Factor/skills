@@ -1,6 +1,6 @@
 ---
 name: meta-repo
-description: Create, maintain, and work inside meta-repos — lightweight git repositories that define and document a working set of several independent repos (a.k.a. workspace repository; formerly pseudo-monorepo), wired together with relative symlinks. Use when the user wants to set up or manage a multi-repo workspace, add/remove member repos, onboard a teammate to a multi-repo setup, audit symlinks or repo consistency, regenerate workspace docs (AGENTS.md/README), produce a cross-repo architecture summary, or asks about meta-repo.yaml, workspace.yaml, pseudo-monorepos, or "which repos belong to this project." Also use to decide whether a task is scoped to one member repo or the whole workspace.
+description: Create, maintain, and work inside meta-repos — lightweight git repositories that define and document a working set of several independent repos (a.k.a. workspace repository; formerly pseudo-monorepo), wired together with relative symlinks. Use when the user wants to set up or manage a multi-repo workspace, add/remove member repos, onboard a teammate to a multi-repo setup, audit symlinks or repo consistency, regenerate workspace docs (AGENTS.md/README), produce a cross-repo architecture summary, or asks about meta-repo.yaml, pseudo-monorepos, or "which repos belong to this project." Also use to decide whether a task is scoped to one member repo or the whole workspace.
 ---
 
 # meta-repo
@@ -119,11 +119,9 @@ Members are **siblings under a shared parent**; symlinks are relative (`../name`
 engine-owned. `README.md` / `AGENTS.md` prose is scaffolded once then **yours** — the engine
 only *reports* its drift.
 
-**Notes & files — shared by default, `-local` to keep private.** A meta-repo is a shared
-workspace: anything saved in it (docs, notes, scripts, plans) can and should be committed.
-To keep something out, suffix its name with `-local` — any file or dir ending `-local` is
-git-ignored (`scratch-local/`, `todo-local.md`). No private directory, no nesting; the engine
-bakes `*-local` into the managed `.gitignore` so every meta-repo honors it. Fixed-name tool
-files that can't take the suffix go in `.git/info/exclude`.
+**Notes & files — shared by default, `-local` to keep private.** Everything in a meta-repo is
+committable by default; suffix any file or dir `-local` to git-ignore it (`scratch-local/`,
+`todo-local.md`). Full rule — and the `.git/info/exclude` escape for fixed-name tool files —
+in [REFERENCE.md](REFERENCE.md).
 
 Full schema, ownership table, and edge cases: **[REFERENCE.md](REFERENCE.md)**.
