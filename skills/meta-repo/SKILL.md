@@ -1,6 +1,7 @@
 ---
 name: meta-repo
 description: Create, maintain, and work inside meta-repos — lightweight git repositories that define and document a working set of several independent repos (a.k.a. workspace repository; formerly pseudo-monorepo), wired together with relative symlinks. Use when the user wants to set up or manage a multi-repo workspace, add/remove member repos, onboard a teammate to a multi-repo setup, audit symlinks or repo consistency, regenerate workspace docs (AGENTS.md/README), produce a cross-repo architecture summary, or asks about meta-repo.yaml, pseudo-monorepos, or "which repos belong to this project." Also use to decide whether a task is scoped to one member repo or the whole workspace.
+compatibility: POSIX hosts (macOS, Linux) and WSL. Requires python3 ≥3.8 and git; installs nothing on the host. Native Windows is unsupported — the workspace model relies on POSIX relative symlinks, which need Developer Mode/privilege there; run under WSL instead.
 ---
 
 # meta-repo
@@ -24,6 +25,9 @@ If `scripts/meta-repo.py` doesn't exist in the meta-repo yet, run the copy bundl
 this skill — `scripts/meta-repo.py` sitting beside this `SKILL.md`. `init`/`heal` then
 vendor a copy into the meta-repo so the engine travels with the repo (zero install for
 teammates — just `python3`).
+
+Needs a POSIX host or WSL (see `compatibility`): the engine wires members with relative
+symlinks and stops with a clear message where the OS won't create them (native Windows).
 
 | Command | What it does | Acts? |
 |---------|--------------|-------|
