@@ -20,10 +20,10 @@ it**. From inside any meta-repo:
 python3 scripts/meta-repo.py <command>
 ```
 
-If `scripts/meta-repo.py` doesn't exist yet, it lives at
-`~/.claude/skills/meta-repo/scripts/meta-repo.py` — run that path; `init`/`heal` vendor a
-copy into the meta-repo so it travels with the repo (zero install for teammates — just
-`python3`).
+If `scripts/meta-repo.py` doesn't exist in the meta-repo yet, run the copy bundled with
+this skill — `scripts/meta-repo.py` sitting beside this `SKILL.md`. `init`/`heal` then
+vendor a copy into the meta-repo so the engine travels with the repo (zero install for
+teammates — just `python3`).
 
 | Command | What it does | Acts? |
 |---------|--------------|-------|

@@ -8,6 +8,9 @@ directory with a `SKILL.md` file that describes when the skill should be loaded 
 ## Available Skills
 
 - `mentor`: switches an agent into learning-first mentoring mode for developing engineers.
+- `meta-repo`: create, maintain, and work inside meta-repos — lightweight git repos that wire several
+  independent repos together with relative symlinks. Bundles a stdlib-only Python engine (teammates need
+  only `python3`, no install).
 
 ## Install
 

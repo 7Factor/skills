@@ -166,15 +166,18 @@ symlink + yaml entry.
 - **Fresh clone of the meta-repo** — member symlinks dangle harmlessly until `sync` clones the
   siblings from their stored remotes.
 - **Engine version drift** — `META_REPO_VERSION` is stamped in the file; `doctor` compares the
-  vendored copy to the running engine, `heal` refreshes it. The global skill copy is canonical.
+  vendored copy to the running engine, `heal` refreshes the vendored copy from whichever engine
+  is running (higher `META_REPO_VERSION` wins).
 - **No YAML library / no `yq`** — intentional. The engine is the sole writer, so it only ever
   reads back its own constrained output. One mechanism, no dependency, no fallback path.
 
-## Relationship to the global skill
+## Relationship to the installed skill
 
-The canonical engine + this documentation live at `~/.claude/skills/meta-repo/`. `init`/`heal`
-**vendor** `scripts/meta-repo.py` into each meta-repo so the engine travels with the repo and a
-teammate needs only `python3` — no skill install. Installing the global skill makes an agent
-*better* at meta-repo judgment work (interviewing, scoping, architecture summaries) but is not
-required for the repo to function. The scaffolded `AGENTS.md` carries the topology + scoping
+The engine and this documentation ship with the **meta-repo skill** (published in the 7Factor
+skills catalog, `github.com/7Factor/skills`). `init`/`heal` **vendor** `scripts/meta-repo.py`
+into each meta-repo so the engine travels with the repo and a teammate needs only `python3` — no
+skill install. Installing the skill makes an agent *better* at meta-repo judgment work
+(interviewing, scoping, architecture summaries) but is not required for the repo to function.
+Wherever the skill is installed, that copy is the upstream for vendoring; the catalog is the
+source of truth for the skill itself. The scaffolded `AGENTS.md` carries the topology + scoping
 rules so even an agent without the skill is oriented.
