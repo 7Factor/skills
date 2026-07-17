@@ -62,8 +62,15 @@ def rate_for(model, day):
         else: break
     return best  # None if day precedes the earliest record
 
+def cw1_rate(rec):
+    # 1-hour cache-write rate; fall back to 2x input if a record predates the cw_1h column
+    return rec.get("cw_1h", 2*rec["in"])
+
 def msg_cost(rec, u):
-    return 0.0 if not rec else sum(u[f]*rec[f] for f,_ in FIELDS)/1e6
+    if not rec: return 0.0
+    c = sum(u[f]*rec[f] for f,_ in FIELDS if f != "cw")
+    c += u["cw5"]*rec["cw"] + u["cw1"]*cw1_rate(rec)  # cache-write split by actual TTL
+    return c/1e6
 
 # --- arg parsing: period + optional --top N
 argv = sys.argv[1:]
@@ -157,12 +164,24 @@ for path in glob.glob(os.path.join(ROOT, "**", "*.jsonl"), recursive=True):
                         if model:
                             usage = msg["usage"]
                             u = {fk: (usage.get(k,0) or 0) for fk,k in FIELDS}
+                            # split cache-write by TTL; legacy transcripts w/o the
+                            # breakdown fall back to the combined field, costed as 5m
+                            cc = usage.get("cache_creation") or {}
+                            if "ephemeral_5m_input_tokens" in cc or "ephemeral_1h_input_tokens" in cc:
+                                u["cw5"] = cc.get("ephemeral_5m_input_tokens",0) or 0
+                                u["cw1"] = cc.get("ephemeral_1h_input_tokens",0) or 0
+                            else:
+                                u["cw5"] = u["cw"]; u["cw1"] = 0
                             rec = rate_for(model, day)
                             if rec is None: unpriced.add(model)
-                            c = msg_cost(rec, u); t = sum(u.values())
+                            c = msg_cost(rec, u); t = sum(u[fk] for fk,_ in FIELDS)
                             for fk,_ in FIELDS:
                                 model_tok[model][fk] += u[fk]
-                                if rec: model_catcost[model][fk] += u[fk]*rec[fk]/1e6
+                                if not rec: continue
+                                if fk == "cw":
+                                    model_catcost[model][fk] += (u["cw5"]*rec["cw"] + u["cw1"]*cw1_rate(rec))/1e6
+                                else:
+                                    model_catcost[model][fk] += u[fk]*rec[fk]/1e6
                             model_cost[model] += c
                             sess_cost[sid] += c; sess_tok[sid] += t
                             day_cost[day] += c; day_tok[day] += t; day_sids[day].add(sid)
@@ -199,13 +218,13 @@ print(PRICING_MSG)
 if unpriced:
     print(f"WARNING: no price record covers these models for part of the period: {', '.join(sorted(unpriced))} — add/extend them in prices.json.")
 
-print("\nRATES in effect this period ($/MTok): model | effective | in | out | cache-write | cache-read | note")
+print("\nRATES in effect this period ($/MTok): model | effective | in | out | cache-write(5m) | cache-write(1h) | cache-read | note")
 for m in sorted(model_tok, key=lambda m: model_cost[m], reverse=True):
     recs = applicable_records(m)
     if not recs:
         print(f"  {m} | (no price record — UNPRICED)")
     for r in recs:
-        print(f"  {m} | {r['effective']} | {r['in']} | {r['out']} | {r['cw']} | {r['cr']} | {r.get('note','')}")
+        print(f"  {m} | {r['effective']} | {r['in']} | {r['out']} | {r['cw']} | {cw1_rate(r)} | {r['cr']} | {r.get('note','')}")
 
 print("\nBY MODEL: model | total$ | in(tok,$) | out(tok,$) | cache-write(tok,$) | cache-read(tok,$)")
 for m in sorted(model_tok, key=lambda m: model_cost[m], reverse=True):
