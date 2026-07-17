@@ -6,15 +6,7 @@
   "plugins": [
     {
       "name": "claude-usage-report",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/7Factor/skills.git",
-        "path": "skills/claude-usage-report",
-        "ref": "main"
-      },
-      "skills": [
-        "."
-      ],
+      "source": "./skills/claude-usage-report",
       "description": "Usage/cost reports with self-refreshing pricing and per-account attribution."
     }
   ]
