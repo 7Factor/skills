@@ -6,6 +6,13 @@ This file provides guidance to coding agents (Claude Code, Codex, and others) wh
 
 `main` is protected: you **cannot push directly to `main`**. All changes land via a pull request to main (push only when the user directs it).
 
+## Organization
+
+- `.claude/skills` is a **symlink** to `.agents/skills`. The repo-local `write-a-skill` skill lives at
+  `.agents/skills/write-a-skill/` and is the authoring guide/checklist — use it when adding or changing a skill.
+- Some skills in `.agents/skills` may be **symlinks** to skills in `skills` to guarantee the version of a skill 
+  used is the latest one in the repository. 
+
 ## Skill install paths are not equivalent
 
 Skills in this repo are consumed two ways, and they install different things:
