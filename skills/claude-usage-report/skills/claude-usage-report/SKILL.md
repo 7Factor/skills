@@ -122,15 +122,17 @@ account-recording hook existed; `mixed: a | b` = a session that switched account
 ## Reference
 
 Model prices ($/MTok), records in effect during the period:
-| Model | Effective | Input | Output | Cache-write (5m) | Cache-read | Note |
-|---|---|---:|---:|---:|---:|---|
+| Model | Effective | Input | Output | Cache-write (5m) | Cache-write (1h) | Cache-read | Note |
+|---|---|---:|---:|---:|---:|---:|---|
 {the RATES block from parser output — one row per applicable record; a model with a
 mid-period price change contributes more than one row}
 
 Caveats:
 - Estimate from local transcripts × public list prices, not a bill — for the authoritative
   number use the Anthropic Console usage dashboard for the period.
-- Cache-write assumes the 5-minute TTL (1.25× input); a 1-hour TTL would be 2× input.
+- Cache-write is priced at each message's actual TTL (5-minute = 1.25× input, 1-hour = 2×
+  input), read from the transcript's `cache_creation` breakdown. Legacy transcripts that
+  lack the breakdown fall back to the 5-minute rate.
 - Opus's 1M-context (`[1m]`) runs bill at standard rates; there is no >200K premium tier.
 - Account attribution comes from this plugin's `SessionStart` hook (`hooks/hooks.json` →
   `record_account.sh` → `record_account.py` → `~/.claude/session-accounts.jsonl`) and is

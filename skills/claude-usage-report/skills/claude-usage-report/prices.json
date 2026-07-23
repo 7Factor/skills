@@ -1,5 +1,5 @@
 {
-  "_comment": "Anthropic list prices, $/MTok. Fields: in=input, out=output, cw=5-minute cache write (1.25x input), cr=cache read (0.1x input). Each model has one or more records sorted by 'effective' date; the rate applied to a message is the record with the latest effective date <= that message's (UTC) day. This makes a report use the price in effect on the day being reported. Validate against current published pricing when generating a report and append a new dated record when a price changes (see SKILL.md). Known gap: if a price changes between two report runs, days billed before this file was updated will be costed at the older record.",
+  "_comment": "Anthropic list prices, $/MTok. Fields: in=input, out=output, cw=5-minute cache write (1.25x input), cw_1h=1-hour cache write (2x input), cr=cache read (0.1x input). Each message's cache-write tokens are split into 5m/1h from the transcript's cache_creation breakdown and costed at cw / cw_1h respectively; if a record omits cw_1h the parser falls back to 2x in. Each model has one or more records sorted by 'effective' date; the rate applied to a message is the record with the latest effective date <= that message's (UTC) day. This makes a report use the price in effect on the day being reported. Validate against current published pricing when generating a report and append a new dated record when a price changes (see SKILL.md). Known gap: if a price changes between two report runs, days billed before this file was updated will be costed at the older record.",
   "models": {
     "claude-fable-5": [
       {
@@ -7,6 +7,7 @@
         "in": 10.0,
         "out": 50.0,
         "cw": 12.5,
+        "cw_1h": 20.0,
         "cr": 1.0
       }
     ],
@@ -16,6 +17,7 @@
         "in": 5.0,
         "out": 25.0,
         "cw": 6.25,
+        "cw_1h": 10.0,
         "cr": 0.5
       }
     ],
@@ -25,6 +27,7 @@
         "in": 5.0,
         "out": 25.0,
         "cw": 6.25,
+        "cw_1h": 10.0,
         "cr": 0.5
       }
     ],
@@ -34,6 +37,7 @@
         "in": 5.0,
         "out": 25.0,
         "cw": 6.25,
+        "cw_1h": 10.0,
         "cr": 0.5
       }
     ],
@@ -43,6 +47,7 @@
         "in": 2.0,
         "out": 10.0,
         "cw": 2.5,
+        "cw_1h": 4.0,
         "cr": 0.2,
         "note": "introductory through 2026-08-31"
       },
@@ -51,6 +56,7 @@
         "in": 3.0,
         "out": 15.0,
         "cw": 3.75,
+        "cw_1h": 6.0,
         "cr": 0.3,
         "note": "standard"
       }
@@ -61,6 +67,7 @@
         "in": 3.0,
         "out": 15.0,
         "cw": 3.75,
+        "cw_1h": 6.0,
         "cr": 0.3
       }
     ],
@@ -70,6 +77,7 @@
         "in": 1.0,
         "out": 5.0,
         "cw": 1.25,
+        "cw_1h": 2.0,
         "cr": 0.1
       }
     ],
@@ -145,7 +153,7 @@
     ]
   },
   "_meta": {
-    "last_checked": "2026-07-07T16:38:34",
+    "last_checked": "2026-07-16T19:46:42",
     "source": "https://platform.claude.com/docs/en/about-claude/pricing.md"
   }
 }
