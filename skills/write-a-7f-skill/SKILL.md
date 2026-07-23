@@ -1,0 +1,172 @@
+---
+name: write-a-7f-skill
+description: Write or revise a portable 7Factor Software agent skill using Matt Pocock's skill-writing discipline and 7Factor's immutable-host script standard.
+compatibility: Requires filesystem access and a client supporting Claude-compatible manual skill invocation; best with /writing-great-skills installed.
+argument-hint: "[skill request]"
+disable-model-invocation: true
+---
+
+# Write a Portable 7Factor Skill
+
+## Load the craft discipline
+
+Use Matt Pocock's `/writing-great-skills` as the primary authoring discipline. Fall back to the legacy `/write-a-skill`
+when that is the installed option. Treat that companion skill as the single source of truth for invocation, information
+hierarchy, completion criteria, progressive disclosure, leading words, and pruning; this skill supplies only the
+7Factor overlay.
+
+1. Prefer guidance already active in the current turn.
+2. Invoke an available model-invoked companion skill. A user-invoked companion can only be activated by the user; if it
+   is installed but inactive, pause and ask the user to invoke it alongside this skill.
+3. If neither companion is installed, pause before authoring and strongly recommend installing
+   [`mattpocock/skills`](https://github.com/mattpocock/skills):
+
+   ```sh
+   npx skills@latest add mattpocock/skills
+   ```
+
+   Ask the user to select `/writing-great-skills`, then rerun the request with both skills. Continue without Matt's
+   discipline only after the user explicitly declines.
+
+This gate is complete when Matt's current or legacy guidance is active, or the user has explicitly declined it.
+
+## Portability invariant
+
+Every skill this workflow creates has a portable core. Keep all required behavior in the portable Agent Skills body and
+express it in client-neutral terms. Consumer-specific fields, tools, hooks, and commands may add optional enhancements;
+the core result remains available through the portable body alone.
+
+## Author the skill
+
+1. Read the request, repository instructions, neighboring skills, and the existing target before asking questions.
+   Establish concrete uses, destination, public or private status, invocation choice, and required resources. For a
+   public skill in this repository, use `skills/<skill-name>/`. This step is complete when every choice that would
+   materially change the skill is resolved.
+2. Design the skill with the active Matt guidance. Keep steps and their checkable completion criteria in `SKILL.md`;
+   disclose branch-specific reference behind explicit context pointers; remove duplication, sediment, and no-ops. This
+   step is complete when every instruction has one authoritative home and every branch is reachable.
+3. Select frontmatter using the standard below. This step is complete when every included field changes discovery,
+   execution, compatibility, permissions, or presentation for a known consumer, and every target validator accepts it.
+4. Decide whether deterministic or repeated operations justify bundled scripts. When they do, apply the entire
+   immutable-host standard below before writing them. This step is complete when each scripted operation has one
+   documented portable dispatch flow using one execution strategy below. The flow is callable from POSIX and native
+   Windows command environments without depending on the runtime being probed.
+5. Create or edit only the files the skill needs. Test bundled scripts through their documented dispatch flow, and
+   update any generated agent metadata only when the skill owns it. This step is complete when no placeholders or
+   unused resources remain and every changed file contributes to the skill.
+6. Validate the skill with the repository's validator when available, inspect the final diff, and test every execution
+   branch in POSIX and native Windows command environments locally or in CI. This step is complete when validation
+   passes, every rule in this skill has been applied, and any portable execution path that could not be tested is
+   reported as a blocker rather than assumed to work.
+
+## Frontmatter standard
+
+Identify every intended agent before selecting fields. Check the current
+[Agent Skills specification](https://agentskills.io/specification) for portable fields and each target agent's official
+documentation for extensions; never infer support from another agent's parser.
+
+- Start with portable `name` and `description`. Add `license`, `compatibility`, `metadata`, or the experimental
+  `allowed-tools` only when the field has a concrete consumer. Use `compatibility` for intended products, required
+  local runtimes, Docker alternatives, system packages, architecture, and network access. Most skills need no
+  compatibility declaration.
+- Keep required behavior in the portable body. Treat implementation-specific fields as optional enhancements, and
+  verify strict target validators accept them.
+- For a Claude-targeted skill, consult the current
+  [Claude Code skill frontmatter reference](https://code.claude.com/docs/en/slash-commands). Consider invocation fields
+  (`disable-model-invocation`, `user-invocable`), arguments (`argument-hint`, `arguments`), permissions
+  (`allowed-tools`, `disallowed-tools`), execution (`model`, `effort`, `context`, `agent`), and scoping (`hooks`,
+  `paths`, `shell`) only when the corresponding behavior is intentional. Remember that Claude's `allowed-tools`
+  pre-approves tools; it does not restrict the remaining tool set.
+- Omit defaults, decorative metadata, guessed fields, and permissions broader than the skill requires. Validate against
+  every declared target, not merely the authoring agent.
+
+## Immutable-host script standard
+
+Treat the user's host as immutable. Execute with dependencies that are already available, or execute inside Docker.
+Package managers, runtime managers, virtual environments, shell profiles, `PATH`, and system configuration on the host
+remain untouched. The sole exception is a skill whose declared purpose is to install or configure the host environment.
+
+### Portable dispatch
+
+Use the host execution context already reported to the agent as routing input. Map macOS, Linux, and WSL to the POSIX
+branch and native Windows to the Windows branch, regardless of the active shell. If the context is unknown, identify it
+with a non-mutating host query before routing. After selecting a branch, probe only the runtime and capabilities that
+branch needs. When no native branch exists, issue the local-runtime and Docker probes through the current command
+environment. The dispatcher must not depend on the runtime it probes and must be callable from both a POSIX shell and a
+native Windows command environment.
+
+For agent-invoked scripts, put branch selection in the skill body. Hooks and other automatic entry points need
+launchers callable from both environments.
+
+### Select the execution strategy
+
+Choose the first applicable strategy in order. Later strategies handle operations that do not meet an earlier
+strategy's definition.
+
+- **Native pair**: a dependency-free operation whose equivalent `.sh` and `.ps1` implementations remain small,
+  maintainable, and limited to declared native baselines under one behavior contract.
+- **Simple runtime**: a runtime plus its standard library, or another small dependency set already supplied by one
+  trusted base image.
+- **Complex runtime**: language packages, native libraries, external executables such as Graphviz or FFmpeg, services,
+  compiled extensions, or a dependency set whose installation varies by platform.
+
+### Native pair
+
+1. Bundle equivalent `.sh` and `.ps1` implementations for POSIX and native Windows command environments, respectively.
+   Use a thin `.cmd` PowerShell launcher when an automatic entry point requires CMD.
+2. Declare each implementation's interpreter, minimum version, and required capabilities. Treat shell built-ins,
+   standard APIs, and executables guaranteed by those baselines as native; classify every other executable as a
+   dependency.
+3. Give both implementations one documented contract for arguments, inputs, outputs, standard streams, exit codes, and
+   side effects. Keep this contract as their single source of truth.
+4. Run the implementation selected by the portable dispatcher. Probe its declared baseline, preferring a non-mutating
+   script self-test over shell discovery or a no-op runtime check.
+5. Treat a native pair as complete without Docker. Reclassify the operation as simple or complex when either
+   implementation exceeds its native baseline or equivalent implementations would be substantial, divergent, or
+   impractical to maintain.
+
+### Simple runtime
+
+1. After the portable dispatcher selects this path, directly execute a non-mutating probe for the exact runtime,
+   supported version, required capabilities, and intended script invocation. Prefer the script's dry run or self-test
+   over executable discovery or a no-op runtime check.
+2. Use the local runtime only when the complete probe passes.
+3. Otherwise, verify both the Docker client and daemon, then run the script in a named official or otherwise trusted
+   image pinned to a version and preferably an immutable digest.
+4. If Docker is unavailable or unusable, stop and tell the user to configure the required local runtime or install and
+   start Docker. Do not attempt either change.
+
+### Complex runtime
+
+1. Probe every runtime, executable, library, and material capability without changing the host. A small import or
+   execution smoke test is stronger than version checks alone.
+2. Use the local path only when the whole probe passes; otherwise use Docker.
+3. For a private or unpublished image, include a Dockerfile, locked dependency inputs, and one dispatcher, expressed
+   through portable launchers where necessary, that performs the probe and fallback. Pin the base image by digest
+   and dependencies as tightly as the ecosystem permits.
+4. Build the fallback image through that dispatcher on every Docker execution. Let Docker's content cache make
+   unchanged builds cheap and invalidate layers when the Dockerfile or locked inputs change. Prefer mounting the
+   current scripts into an environment-only image; then script changes take effect immediately without rebuilding the
+   environment. If scripts are copied into the image, the always-build dispatcher must include them in the build
+   context.
+5. For a public skill, prefer a published multi-architecture environment image from a trusted registry, referenced by
+   immutable digest. Publish a new image when the Dockerfile or locked environment inputs change, then update the
+   digest in the dispatcher. Mount the skill's current scripts rather than baking them into the image when practical.
+6. Use Docker Compose only when the runtime genuinely needs multiple containers, networks, or persistent services. For
+   a single script environment, a dispatcher around `docker build` and `docker run` is the smaller contract. When
+   Compose is justified, have the dispatcher build before `run` or `up`, or reference published images by immutable
+   digest.
+
+### Container fallback contract
+
+This contract applies only to simple and complex strategies with a Docker fallback.
+
+- Route every invocation of a container-backed strategy through the same documented dispatch flow so the local probe
+  and fallback cannot drift. Launcher syntax may differ between command environments, but each entry point must
+  implement that same flow.
+- Use `--rm`, least-privilege settings, a non-root user when practical, and only the exact mounts required for inputs
+  and outputs. Avoid privileged mode, the host Docker socket, and broad home-directory mounts.
+- State the image reference, required mounts, inputs, outputs, supported architectures, and failure message in the
+  skill. A failed pull or build is a blocker to report, not permission to install host dependencies.
+- Test the local path when its probe passes and the Docker path whenever Docker is available. When Docker is absent and
+  the fallback is required, stop with the environment-or-Docker choice instead of declaring the skill complete.
