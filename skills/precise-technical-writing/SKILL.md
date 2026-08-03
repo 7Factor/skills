@@ -1,12 +1,11 @@
 ---
-name: concise-technical-writing
+name: precise-technical-writing
 description: Use when writing or refining durable technical text — docs, code comments, PR descriptions, issue bodies, runbooks, handoff notes, agent instructions — or when another skill needs a final wording pass. Applies implicitly to durable artifacts.
-author:
-  name: Scott Pfister
-  email: scott.pfister@7factor.io
+metadata:
+  author: Scott Pfister (scott.pfister@7factor.io)
 ---
 
-# Concise Technical Writing
+# Precise Technical Writing
 
 Write for precision: an engineer or agent reading this later must not have to guess what it meant.
 
@@ -95,7 +94,8 @@ Built for an agent to retrieve first and a human to read second.
 - Use stable headings and field names.
 - Put facts under predictable labels, where a reader finds them without reading prose.
 - Give explicit names, paths, commands, owners, states, and links.
-- Use these fields where they apply: Purpose, Responsibilities, Inputs, Outputs, Dependencies, Invariants, Failure Modes, Sources, Verification, Open Questions.
+- Use these fields where they apply: Purpose, Responsibilities, Inputs, Outputs, Dependencies, Invariants, Failure Modes, Open Questions.
+- Always include a `Sources` field listing the paths the facts came from. A reference doc describes something it is not connected to, so the reader needs the path to re-check it. Without one, the doc drifts and nobody can tell.
 
 ## Claim safety
 
@@ -124,7 +124,7 @@ A rewrite keys off the prose it reads, so vocabulary changes and weak structure 
 
 Other skills reach this skill with:
 
-> Before finalizing durable technical writing, apply `concise-technical-writing`: pick a gear, write from claims, hold claim strength steady, and structure for later retrieval.
+> Before finalizing durable technical writing, apply `precise-technical-writing`: pick a gear, write from claims, hold claim strength steady, and structure for later retrieval.
 
 ## Drift
 

@@ -10,7 +10,7 @@ directory with a `SKILL.md` file that describes when the skill should be loaded 
 - `mentor`: switches an agent into learning-first mentoring mode for developing engineers.
 - `claude-usage-report`: reports Claude Code usage & cost from local session transcripts.
   (For per-account attribution across multiple accounts, install as a plugin instead — [see below](#installing-claude-usage-report-skill-vs-plugin).)
-- `concise-technical-writing`: picks a writing mode per artifact for durable technical text — docs, code
+- `precise-technical-writing`: picks a writing mode per artifact for durable technical text — docs, code
   comments, PR descriptions, runbooks, handoff notes — and holds claim strength steady while tightening wording.
   Procedural text follows controlled English modeled on [ASD-STE100](https://www.asd-ste100.org/).
 
