@@ -1,6 +1,6 @@
 ---
 name: concise-technical-writing
-description: Use when creating, editing, or refining durable technical communication such as documentation, code comments, PR descriptions, issue bodies, review replies, handoff notes, architecture notes, runbooks, agent instructions, or technical explanations where clarity, concision, structure, and unambiguous wording matter. Apply this skill implicitly for final wording of durable artifacts.
+description: Use when writing or refining durable technical text — docs, code comments, PR descriptions, issue bodies, runbooks, handoff notes, agent instructions — or when another skill needs a final wording pass. Applies implicitly to durable artifacts.
 author:
   name: Scott Pfister
   email: scott.pfister@7factor.io
@@ -8,224 +8,124 @@ author:
 
 # Concise Technical Writing
 
-Use this skill as a final communication pass for durable technical writing.
+Write for precision: an engineer or agent reading this later must not have to guess what it meant.
 
-The goal is precision: engineering communication that is clear, concise, explicit, and easy for humans and agents to reuse.
+## Gears
 
-## Default Behavior
+Control is a dial, not a switch. The four gears are one style at four compression ratios, ordered from most prose to least.
 
-Use this skill when the output is likely to be saved, reviewed, reused, searched, pasted, committed, or used by another agent later.
+| Gear | Name          | Prose       | Shift here when      |
+| ---- | ------------- | ----------- | -------------------- |
+| 1    | `narrative`   | Most        | Exploration matters  |
+| 2    | `engineering` | Default     | —                    |
+| 3    | `controlled`  | Little      | Precision matters    |
+| 4    | `reference`   | Almost none | Later lookup matters |
 
-Examples:
+Start in gear 2. Shift to 3 or 4 when precision or lookup matters. Drop to gear 1 only when exploration, persuasion, or live disagreement matters.
 
-- Code comments
-- README sections
-- Architecture docs
-- ADRs
-- API docs
-- PR descriptions
-- Review replies
-- Issue descriptions
-- Handoff docs
-- Task plans
-- Runbooks
-- Agent skills
-- Project instructions
+Shift per section, not only per document. An ADR runs gear 3 for the decision, gear 2 for the rationale, gear 1 for the discussion.
 
-For normal conversation, use the principles lightly. Keep replies natural. Apply the full refinement pass when the output is durable or precision matters.
+In conversation, keep the reply natural and apply the gear's spirit. Full refinement is for durable text.
 
-## Workflow
+## Choosing a gear
 
-Before finalizing durable technical writing:
+Classify intent first, artifact second.
 
-1. Identify the artifact type.
-2. Identify the dominant communication intent.
-3. Select a writing mode.
-4. Apply section-level modes when a section has a different intent.
-5. Refine for clarity, concision, and structure.
-6. Preserve claim strength. Keep assumptions labeled as assumptions.
-7. Check that the final text keeps the original meaning.
+| Intent                                                          | Gear |
+| --------------------------------------------------------------- | ---- |
+| `instruct` — tell someone what to do                            | 3    |
+| `specify` — state requirements, contracts, invariants, criteria  | 3    |
+| `look-up` — help someone find a fact later                      | 4    |
+| `explain` — help someone understand                             | 2    |
+| `justify` — give rationale, tradeoffs, or risk                   | 2    |
+| `respond` — answer a person, in review or collaboration          | 2    |
+| `explore` — think through unknowns or options                    | 1    |
 
-## Intent Classifier
+When intent is mixed or unclear, fall back to the artifact:
 
-Classify by intent first and artifact type second.
+| Artifact                                        | Gear               | Shift for                              |
+| ----------------------------------------------- | ------------------ | -------------------------------------- |
+| Code comment                                    | 3                  | 2 for rationale                        |
+| API doc, runbook, procedure, acceptance criteria | 3                  | 2 for background                       |
+| Agent skill, project instructions               | 3                  | 4 for lookup tables, 2 for context     |
+| PR description                                  | 2                  | 3 for testing, rollout, reviewer steps |
+| Review reply                                    | 2                  | 3 for exact commitments                |
+| Explainer, design summary, issue body           | 2                  | —                                      |
+| Architecture index, module summary, repo guide  | 4                  | 2 for short context                    |
+| Handoff note                                    | 4                  | 3 for next steps and commands          |
+| ADR                                             | 3 for the decision | 2 for rationale, 1 for discussion      |
+| Brainstorm, strategy, RFC discussion            | 1                  | —                                      |
 
-- `instruct`: Tell someone what to do.
-- `specify`: State requirements, contracts, rules, invariants, or acceptance criteria.
-- `reference`: Help future lookup.
-- `explain`: Help understanding.
-- `justify`: Explain rationale, tradeoffs, or risk.
-- `explore`: Think through unknowns or options.
-- `respond`: Answer a person, especially in review or collaboration.
+## Gear rules
 
-## Modes
+Each gear adds only what is listed here.
 
-### `auto`
+### 1 `narrative`
 
-Default mode. Classify the artifact and intent, then choose the right mode.
-
-Use a dominant mode for the artifact. Override by section only when the section's intent clearly differs.
-
-### `engineering`
-
-Use for concise natural technical prose.
-
-Good for:
-
-- PR descriptions
-- Explainers
-- Review replies
-- Design summaries
-- Normal documentation
-- Rationale that does not need a long narrative
-
-Rules:
-
-- Prefer short paragraphs.
-- Remove filler and generic praise.
-- Use specific nouns and verbs.
-- Keep terminology consistent.
-- State assumptions and limits.
-- Separate summary, details, risks, and verification when useful.
-- Keep a human tone when replying to people.
-
-### `controlled`
-
-Use controlled technical English inspired by ASD-STE100. Use software terminology instead of the official STE approved word list.
-
-Good for:
-
-- Procedures
-- Code comments
-- API docs
-- Runbooks
-- Acceptance criteria
-- Requirements
-- Contracts
-- Invariants
-- Implementation notes
-
-Rules:
-
-- Use active voice.
-- Use explicit subjects.
-- Put one action or claim in each sentence.
-- State conditions before actions.
-- Use the same term for the same concept.
-- Prefer concrete verbs over abstract nouns.
-- Remove filler, hedging, and marketing language.
-- Keep sentences short when practical.
-- Use ordered lists for procedures.
-- Use bullets or tables for sets of facts.
-- Separate facts, assumptions, recommendations, and rationale.
-- Make error states and consequences explicit.
-
-Use software vocabulary. Keep precise terms even when they are outside aircraft-maintenance vocabulary. Prefer clear sentences over mechanical rule compliance.
-
-### `reference`
-
-Use for dense, predictable lookup material.
-
-Good for:
-
-- Architecture maps
-- Module summaries
-- Repo guides
-- Handoff state
-- Agent-facing memory
-- Source indexes
-
-Optimize for agent retrieval first and human readability second.
-
-Rules:
-
-- Prefer stable headings and fields.
-- Use sparse prose.
-- Use explicit names, paths, commands, owners, states, and links.
-- Group facts under predictable labels.
-- Include sources when available.
-- Do not hide important facts in paragraphs.
-
-Useful fields:
-
-- Purpose
-- Responsibilities
-- Inputs
-- Outputs
-- Dependencies
-- Invariants
-- Failure Modes
-- Sources
-- Verification
-- Open Questions
-
-### `narrative`
-
-Use when nuance, exploration, persuasion, or historical context matters.
-
-Good for:
-
-- Design exploration
-- Tradeoff discussion
-- Strategy
-- RFC discussion
-- ADR rationale
-- Persuasive review context
-
-Rules:
-
-- Keep the prose clear and concise, but allow more connective tissue.
 - Preserve uncertainty and disagreement.
-- Explain why options were accepted or rejected.
-- Do not flatten tradeoffs into false certainty.
-- Keep facts separate from opinions and recommendations.
+- Say why each option was accepted or rejected.
+- Leave tradeoffs as tradeoffs.
+- Label facts, opinions, and recommendations separately.
 
-## Common Artifact Mapping
+### 2 `engineering`
 
-- Code comment: usually `controlled`; use `engineering` only for rationale.
-- PR description: usually `engineering`; use `controlled` for testing, rollout, and reviewer instructions.
-- Review reply: usually `engineering`; use `controlled` for exact commitments or steps.
-- Runbook: usually `controlled`; use `engineering` for background.
-- Architecture index: usually `reference`; use `engineering` for short context.
-- ADR: mixed. Decision and consequences use `controlled`; rationale uses `engineering`; exploration uses `narrative`.
-- Handoff doc: usually `reference`; use `controlled` for next steps and commands.
-- Agent skill: usually `controlled` for procedure; use `reference` for lookup tables; use `engineering` for short context.
+- Give each paragraph one purpose.
+- Cut filler, hedging, and marketing language.
+- Name the assumptions and the limits.
+- Split summary, detail, risk, and verification when the reader needs them apart.
 
-## Claim Safety
+### 3 `controlled`
 
-Concise writing must not overstate certainty.
+Controlled English modeled on ASD-STE100, with software vocabulary in place of the approved word list. ASD-STE100 exists to remove ambiguity for readers who are not native English speakers. Write for that reader.
 
-- Do not strengthen claims during refinement.
-- Preserve uncertainty when the source is uncertain.
-- Mark assumptions explicitly.
-- Mark inferences explicitly when useful.
-- Do not convert guesses into facts.
-- Include source paths, commands, or evidence when the artifact is durable and evidence exists.
-- If an important claim is unverified, label it as unverified or ask whether to verify it.
+- Use active voice and an explicit subject.
+- Put one action or one claim in each sentence.
+- State the condition before the action.
+- Keep sentences under about 20 words.
+- Use the same term for the same concept every time.
+- Use concrete verbs in place of abstract nouns.
+- Use ordered lists for procedures.
+- Name each error state and its consequence.
+- Keep precise software terms. A clear sentence beats rule compliance.
 
-Use clear labels when needed:
+### 4 `reference`
 
-- `Fact:`
-- `Assumption:`
-- `Inference:`
-- `Recommendation:`
-- `Unknown:`
+Built for an agent to retrieve first and a human to read second.
 
-## Embedded Use Contract
+- Use stable headings and field names.
+- Put facts under predictable labels, where a reader finds them without reading prose.
+- Give explicit names, paths, commands, owners, states, and links.
+- Use these fields where they apply: Purpose, Responsibilities, Inputs, Outputs, Dependencies, Invariants, Failure Modes, Sources, Verification, Open Questions.
 
-Other skills can depend on this skill with this compact instruction:
+## Claim safety
 
-> Before finalizing durable technical writing, apply `concise-technical-writing`: classify intent, select a mode, refine for clarity and concision, preserve claim strength, and optimize structure for later retrieval when applicable.
+Tightening the wording must not tighten the certainty. This rule outranks concision.
 
-## Anti-Patterns
+- Carry each claim across at its original strength.
+- Label assumptions as assumptions and unknowns as unknowns.
+- Cite the source path, command, or evidence for each claim in durable text.
+- Say a claim is unverified, or ask to verify it, rather than writing around it.
+- Add nothing the source did not contain: no internal detail, no commitment, no date.
 
-Avoid:
+Use labels where the distinction carries weight: `Fact:` `Assumption:` `Unknown:`
 
-- Applying controlled mode to brainstorming or early design exploration.
-- Making human replies sound like maintenance procedures.
-- Removing useful nuance from rationale.
-- Replacing precise software terminology with generic words.
-- Hiding assumptions to make the text shorter.
-- Turning every artifact into a prose essay.
-- Turning every artifact into a rigid template.
-- Adding headings when a short answer is enough.
+Done when every claim in the output traces to a claim in the input at equal or weaker strength.
+
+## Refining text that already exists
+
+A rewrite keys off the prose it reads, so vocabulary changes and weak structure survives. Rebuild instead:
+
+1. Extract the claims, steps, and open questions as a bare list.
+2. Pick the gear from that list, not from the old prose.
+3. Write from the list.
+4. Check the claim-safety criterion against the original.
+
+## Embedded use contract
+
+Other skills reach this skill with:
+
+> Before finalizing durable technical writing, apply `concise-technical-writing`: pick a gear, write from claims, hold claim strength steady, and structure for later retrieval.
+
+## Drift
+
+A gear holds for a few turns, then slips. Where a repo needs the style enforced instead of requested, gate on a prose linter such as [Vale](https://vale.sh) at pre-commit or `PostToolUse`. The skill sets the target; the gate holds it.
