@@ -4,7 +4,6 @@ gear: 2
 brief: >
   Write the pull request description for this change.
 terms:
-  - ["connection pool", "pool"]
   - ["timeout", "deadline"]
 forbidden:
   - pattern: "(?i)\\b(significantly|dramatically|greatly|massively) (improv|reduc|enhanc|boost)"
@@ -15,7 +14,9 @@ forbidden:
     why: filler opener
 must_hedge:
   - claim: unverified_gain
-    markers: ["local", "not measured", "unverified", "staging", "expect", "should", "have not", "no production"]
+    presence: ["40", "1.1", "p99", "faster", "improvement", "benchmark", "latency"]
+    markers: ["local", "not measured", "unverified", "staging", "expect", "should",
+              "have not", "no production", "laptop", "only", "unconfirmed"]
     why: the 40% figure came from a local benchmark and has not been measured in production
 required:
   - pattern: "(?i)(migration|deploy|order|before|first|drain)"

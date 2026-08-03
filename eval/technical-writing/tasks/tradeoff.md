@@ -15,10 +15,14 @@ forbidden:
     why: invents a recommendation neither engineer made
 must_hedge:
   - claim: unresolved
-    markers: ["unresolved", "disagree", "open", "not decided", "undecided", "no decision", "still", "yet to", "tension", "argument"]
+    presence: ["APIM", "ingress", "option", "position", "approach"]
+    markers: ["unresolved", "disagree", "open", "not decided", "undecided",
+              "no decision", "still", "yet to", "tension", "stuck", "nothing was decided"]
     why: the discussion ended without agreement and that is the main fact
   - claim: cost_unknown
-    markers: ["unknown", "unclear", "no numbers", "not measured", "guess", "estimate", "nobody", "not been"]
+    presence: ["latency", "hop", "ms", "p99", "measur", "cost"]
+    markers: ["unknown", "unclear", "no numbers", "not measured", "unmeasured", "guess",
+              "estimate", "nobody", "not been", "no one", "no data"]
     why: the latency cost is explicitly unmeasured
 required:
   - pattern: "(?i)\\b(mira|dev)\\b"

@@ -54,6 +54,20 @@ NOMINALIZATION = re.compile(
 CODE_FENCE = re.compile(r"```.*?```", re.S)
 INLINE_CODE = re.compile(r"`[^`]*`")
 
+# Markdown emphasis around a field name hid it from the `required` patterns:
+# "**Sources:**" never matched /^#*\s*sources/. Normalize before matching.
+EMPHASIS = re.compile(r"[*_]{1,3}")
+
+
+def normalize(text: str) -> str:
+    """Strip markdown emphasis and list markers so field-name patterns can anchor."""
+    lines = []
+    for ln in text.splitlines():
+        ln = EMPHASIS.sub("", ln)
+        ln = re.sub(r"^\s*[-*+]\s+", "", ln)
+        lines.append(ln.strip())
+    return "\n".join(lines)
+
 
 def prose_only(text: str) -> str:
     """Strip code blocks. Style rules apply to prose, not to the code being documented."""
@@ -82,7 +96,30 @@ def load_task(path: Path) -> dict:
     raw = path.read_text().split("---", 2)
     meta = yaml.safe_load(raw[1])
     meta["input"] = raw[2]
+    validate_task(path.stem, meta)
     return meta
+
+
+def validate_task(task_id: str, meta: dict) -> None:
+    """Reject rules that fire on every output regardless of arm.
+
+    A term group holding both "pool" and "connection pool" always reports drift,
+    because matching the long form also matches the short one. Such a rule measures
+    the rule, not the arm.
+    """
+    for group in meta.get("terms") or []:
+        low = [t.lower() for t in group]
+        for a in low:
+            for b in low:
+                if a != b and a in b:
+                    raise SystemExit(
+                        f"{task_id}: term group {group} has '{a}' inside '{b}', so it "
+                        f"flags every output. Use terms that are not substrings.")
+    for rule in meta.get("must_hedge") or []:
+        if "presence" not in rule:
+            raise SystemExit(
+                f"{task_id}: must_hedge rule '{rule.get('claim')}' needs a 'presence' "
+                f"list, else an omitted claim is miscounted as a hardened one.")
 
 
 def score_style(text: str) -> dict:
@@ -115,9 +152,10 @@ def score_fidelity(text: str, task: dict) -> dict:
     than a number to trust.
     """
     findings = []
+    norm = normalize(text)
 
     for rule in task.get("forbidden") or []:
-        hits = re.findall(rule["pattern"], text, re.M)
+        hits = re.findall(rule["pattern"], norm, re.M)
         if hits:
             findings.append({
                 "kind": "forbidden",
@@ -126,16 +164,30 @@ def score_fidelity(text: str, task: dict) -> dict:
             })
 
     for rule in task.get("must_hedge") or []:
-        if not any(re.search(rf"\b{re.escape(m)}", text, re.I) for m in rule["markers"]):
+        # An absent claim has no hedge markers either, so absence and hardening look
+        # identical unless presence is tested first. They are opposite outcomes:
+        # hardening asserts something unsupported, omission just leaves it out.
+        present = any(re.search(rf"\b{re.escape(m)}", norm, re.I)
+                      for m in rule["presence"])
+        hedged = any(re.search(rf"\b{re.escape(m)}", norm, re.I)
+                     for m in rule["markers"])
+        if present and not hedged:
             findings.append({
                 "kind": "claim_hardened",
                 "claim": rule["claim"],
                 "why": rule["why"],
                 "matched": [],
             })
+        elif not present and not rule.get("absent_ok", False):
+            findings.append({
+                "kind": "claim_absent",
+                "claim": rule["claim"],
+                "why": f"{rule['why']} (claim not raised at all)",
+                "matched": [],
+            })
 
     for rule in task.get("required") or []:
-        if not re.search(rule["pattern"], text, re.M):
+        if not re.search(rule["pattern"], norm, re.M):
             findings.append({
                 "kind": "omitted",
                 "why": rule["why"],
@@ -157,6 +209,7 @@ def score_fidelity(text: str, task: dict) -> dict:
     return {
         "failures": len(findings),
         "claim_hardened": sum(1 for f in findings if f["kind"] == "claim_hardened"),
+        "claim_absent": sum(1 for f in findings if f["kind"] == "claim_absent"),
         "forbidden": sum(1 for f in findings if f["kind"] == "forbidden"),
         "omitted": sum(1 for f in findings if f["kind"] == "omitted"),
         "term_drift": sum(1 for f in findings if f["kind"] == "term_drift"),
@@ -180,6 +233,13 @@ def main() -> int:
             print(f"warn: no task definition for {task_id}, skipping", file=sys.stderr)
             continue
         text = f.read_text()
+        # An in-flight generation truncates its destination before filling it, so a
+        # concurrent score run sees an empty file and reports every hedge as missing.
+        # Refuse rather than emit a plausible wrong number.
+        if len(text.split()) < 20:
+            print(f"warn: {f.name} has {len(text.split())} words — partial or failed "
+                  f"generation, skipping", file=sys.stderr)
+            continue
         results[f.stem] = {
             "task": task_id, "arm": arm,
             "style": score_style(text),
@@ -219,13 +279,14 @@ def emit_markdown(results: dict) -> None:
     print("| **total** | " + " | ".join(f"**{x}**" for x in totals) + " |")
 
     print("\n### Failures by kind\n")
-    print("| Arm | claim hardened | forbidden | omitted | term drift |")
-    print("|---|---|---|---|---|")
+    print("| Arm | claim hardened | claim absent | forbidden | omitted | term drift |")
+    print("|---|---|---|---|---|---|")
     for a in arms:
         rs = [r for r in results.values() if r["arm"] == a]
         print(f"| `{a}` | "
               + " | ".join(str(sum(r["fidelity"][k] for r in rs))
-                           for k in ("claim_hardened", "forbidden", "omitted", "term_drift"))
+                           for k in ("claim_hardened", "claim_absent", "forbidden",
+                                     "omitted", "term_drift"))
               + " |")
 
     print("\n## Style (rates per 1000 words; lower is better)\n")

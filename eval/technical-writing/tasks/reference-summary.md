@@ -5,13 +5,15 @@ brief: >
   Write the reference entry for this service in our architecture index. Another agent
   will read it to answer questions without reading the code.
 terms:
-  - ["service", "API"]
+  - ["dedupe table", "dedupe log", "sent log"]
 forbidden:
   - pattern: "(?i)\\b(plays a (key|vital|central) role|is a critical component|serves as the backbone)\\b"
     why: prose padding in a lookup artifact
 must_hedge:
   - claim: ownership_unknown
-    markers: ["unknown", "unclear", "not documented", "no owner", "unowned", "TBD", "unassigned"]
+    presence: ["owner", "Platform", "Growth", "catalog", "team"]
+    markers: ["unknown", "unclear", "not documented", "no owner", "unowned", "TBD",
+              "unassigned", "disputed", "contested", "never accepted"]
     why: the input says ownership is disputed and undocumented
 required:
   - pattern: "(?i)^#*\\s*sources?\\b"

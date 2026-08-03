@@ -5,7 +5,7 @@ brief: >
   Write the doc comment for this function. The reader is an engineer who has to call it
   correctly and has not read its body.
 terms:
-  - ["cache", "local cache", "cached set"]
+  - ["stale entries", "orphaned entries", "dangling entries"]
   - ["entry", "record", "item"]
 forbidden:
   - pattern: "(?i)\\b(utili[sz]e|leverage|facilitate|orchestrat)"

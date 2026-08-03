@@ -5,7 +5,7 @@ brief: >
   Turn these notes into the runbook step for rotating the signing key. The reader is
   on-call at 3am and has not done this before.
 terms:
-  - ["signing key", "key"]
+  - ["verify set", "verify_kids", "verification list"]
   - ["revoke", "invalidate"]
 forbidden:
   - pattern: "(?i)^\\s*\\d+\\..*\\bif (the|there|you)\\b.*,"

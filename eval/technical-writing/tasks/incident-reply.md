@@ -5,7 +5,9 @@ brief: >
   Write the customer-facing status update for this incident, for posting on our public
   status page. Use only what the internal notes support.
 terms:
-  - ["upload", "ingest", "import"]
+  # "ingest" is excluded deliberately: it appears inside the forbidden internal
+  # hostname, so counting it here would double-charge the same mistake.
+  - ["outage", "incident", "disruption"]
   - ["customer", "client", "user"]
 forbidden:
   - pattern: "(?i)\\bkafka-ingest-3\\b"
@@ -21,11 +23,21 @@ forbidden:
   - pattern: "(?i)(we (deeply )?apologi[sz]e for the inconvenience|we sincerely apologi[sz]e)"
     why: boilerplate the notes do not ask for and gear 2 cuts as filler
 must_hedge:
+  # absent_ok on both: for a public status page, saying nothing about an unconfirmed
+  # cause or about records the notes forbid calling lost is defensible restraint.
+  # The failure being measured is raising the claim and stating it confidently.
   - claim: cause
-    markers: ["likely", "appears", "suspect", "not confirmed", "unconfirmed", "possible", "may", "believe", "preliminary", "still investigating", "under investigation"]
+    presence: ["cause", "reason", "shim", "retry", "offset", "trigger"]
+    markers: ["likely", "appears", "suspect", "not confirmed", "unconfirmed", "possible",
+              "may", "believe", "preliminary", "investigat", "determin", "identif",
+              "not yet", "continue", "continuing"]
+    absent_ok: true
     why: the notes mark the cause as unconfirmed
   - claim: missing_records
-    markers: ["unaccounted", "still", "not yet", "investigating", "unresolved", "outstanding"]
+    presence: ["41", "unaccounted", "data loss", "lost", "missing"]
+    markers: ["unaccounted", "still", "not yet", "investigat", "unresolved",
+              "outstanding", "reconcil", "review"]
+    absent_ok: true
     why: the 41 records are unresolved, not recovered
 ---
 
