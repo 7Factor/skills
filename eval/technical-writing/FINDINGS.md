@@ -105,3 +105,77 @@ supply one. Not yet re-run — the next run tests whether this closes the gap.
   style first would likely reverse several verdicts.
 - Nothing here measures whether the skill fires, or whether a gear survives past one
   turn.
+
+---
+
+# Findings — run 2
+
+- Same 6 tasks. Five arms: `skill` is now the patched revision (`3555d06`, 137 lines) and
+  `skill-v0` is the original as submitted (`429617e`, 231 lines).
+- `baseline`, `oneliner`, and `orwell` outputs were **not** regenerated, so both skill
+  versions face an identical competitor set. `skill` vs `skill-v0` is therefore a paired
+  comparison on fixed opponents.
+- Judge: `opus`, 24 blinded pairs, every arm against `skill`.
+
+## Result: the patch helped, and the skill is now exactly average
+
+| Arm        | wins | losses |
+| ---------- | ---- | ------ |
+| `skill`    | 12   | 12     |
+| `baseline` | 3    | 3      |
+| `oneliner` | 3    | 3      |
+| `orwell`   | 3    | 3      |
+| `skill-v0` | 3    | 3      |
+
+Run 1 had `skill` at 5–12. The patch moved it to 12–12 — a real gain, and also a dead
+heat with every arm including the one-line prompt.
+
+**`skill` vs `skill-v0` is 3–3.** The 100-line refactor is a wash on judged quality.
+
+## The refactor lost style adherence
+
+| Arm        | over 20 words | median sentence | agentless passive | nominalizations |
+| ---------- | ------------- | --------------- | ----------------- | --------------- |
+| `skill-v0` | **18.5%**     | **11.8**        | **4.0**           | 21.0            |
+| `orwell`   | 29.9%         | 13.2            | 4.6               | 23.0            |
+| `skill`    | 33.1%         | 15.0            | 6.1               | **19.3**        |
+| `baseline` | 39.9%         | 17.0            | 4.1               | 22.3            |
+
+The original produces the tightest prose in the field — better than the refactor on
+every column but one, and better than Orwell. Plausible cause: the original restated its
+style rules across the mode lists and the anti-pattern section, and pruning that
+repetition as duplication also removed reinforcement. Tokens bought adherence.
+
+## The fabrication fix: one of three
+
+| Fabrication                                | `skill` (patched) | `skill-v0` |
+| ------------------------------------------ | ----------------- | ---------- |
+| runbook: invented "add it now" recovery    | fixed             | absent     |
+| reference-summary: "exactly-once delivery"  | **still present** | **present** |
+| tradeoff: invented `Date: 2026-08-03`       | **still present** | absent     |
+
+Both skill versions write *"Enforce exactly-once delivery per (notification_id, channel)
+pair."* The source says only that the service must never send twice and keeps a dedupe
+table. So this is not the completeness pressure diagnosed in run 1 — the original has no
+mandatory-field rule and produces it anyway.
+
+**Revised diagnosis for that one.** Gear 3 says *keep precise software terms*. The
+canonical term for the property being described is "exactly-once delivery", and reaching
+for it is exactly what that rule asks for. But a canonical term carries the guarantees
+the term implies, and this system only attempts the property through a dedupe table.
+Vocabulary precision and claim strength can pull against each other, and gear 3 currently
+only pushes one way.
+
+Candidate rule, not yet applied: *a term that names a guarantee asserts that guarantee.
+Where the source describes a mechanism rather than proves a property, use the source's
+own words.*
+
+The invented date appears only in the patched version. With n=1 per cell there is no way
+to tell a regression from sampling noise.
+
+## Stopping the patch loop here
+
+Two patch cycles against 6 tasks at n=1 is the point where tuning becomes overfitting to
+this task set. Further changes should wait on a defensible sample size — multiple
+generations per cell, seed variance reported, and paired CIs — rather than another round
+of chasing individual verdicts.

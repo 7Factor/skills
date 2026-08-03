@@ -84,7 +84,7 @@ Controlled English modeled on ASD-STE100, with software vocabulary in place of t
 - Use the same term for the same concept every time.
 - Use concrete verbs in place of abstract nouns.
 - Use ordered lists for procedures.
-- Name each error state and its consequence.
+- Name each error state the source describes, and its consequence.
 - Keep precise software terms. A clear sentence beats rule compliance.
 
 ### 4 `reference`
@@ -94,8 +94,8 @@ Built for an agent to retrieve first and a human to read second.
 - Use stable headings and field names.
 - Put facts under predictable labels, where a reader finds them without reading prose.
 - Give explicit names, paths, commands, owners, states, and links.
-- Use these fields where they apply: Purpose, Responsibilities, Inputs, Outputs, Dependencies, Invariants, Failure Modes, Open Questions.
-- Always include a `Sources` field listing the paths the facts came from. A reference doc describes something it is not connected to, so the reader needs the path to re-check it. Without one, the doc drifts and nobody can tell.
+- Use these fields where the source supports them, and omit the rest: Purpose, Responsibilities, Inputs, Outputs, Dependencies, Invariants, Failure Modes, Open Questions.
+- Always include a `Sources` field listing the paths the facts came from. A reference doc describes something it is not connected to, so the reader needs the path to re-check it. Without one, the doc drifts and nobody can tell. Where the source gives no paths, say that instead.
 
 ## Claim safety
 
@@ -106,8 +106,14 @@ Tightening the wording must not tighten the certainty. This rule outranks concis
 - Cite the source path, command, or evidence for each claim in durable text.
 - Say a claim is unverified, or ask to verify it, rather than writing around it.
 - Add nothing the source did not contain: no internal detail, no commitment, no date.
+- Leave a field, step, or heading empty when the source does not support it. Write
+  `Unknown:` and stop. An empty field costs a reader nothing; an invented one costs
+  them a wrong decision.
 
 Use labels where the distinction carries weight: `Fact:` `Assumption:` `Unknown:`
+
+This rule also outranks every structural rule below it. A gear that asks for a field,
+an error state, or a recovery path is asking you to look for one, never to supply one.
 
 Done when every claim in the output traces to a claim in the input at equal or weaker strength.
 
