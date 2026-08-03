@@ -17,8 +17,6 @@ of "which repos belong to this effort."
 It is **not**: a monorepo, a git-submodule container, a build artifact, or a release tool.
 Member repos stay fully independent — own history, own build, own deploy, own PRs.
 
-Friendly prior art for the name: `mateodelnorte/meta` ("turn many repos into a meta repo").
-
 ## `meta-repo.yaml` schema
 
 Written **only** by the engine (`init` / `add` / `remove`). Do not hand-edit — that's why
