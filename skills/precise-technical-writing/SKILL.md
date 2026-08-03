@@ -33,27 +33,27 @@ Classify intent first, artifact second.
 | Intent                                                          | Gear |
 | --------------------------------------------------------------- | ---- |
 | `instruct` — tell someone what to do                            | 3    |
-| `specify` — state requirements, contracts, invariants, criteria  | 3    |
+| `specify` — state requirements, contracts, invariants, criteria | 3    |
 | `look-up` — help someone find a fact later                      | 4    |
 | `explain` — help someone understand                             | 2    |
-| `justify` — give rationale, tradeoffs, or risk                   | 2    |
-| `respond` — answer a person, in review or collaboration          | 2    |
-| `explore` — think through unknowns or options                    | 1    |
+| `justify` — give rationale, tradeoffs, or risk                  | 2    |
+| `respond` — answer a person, in review or collaboration         | 2    |
+| `explore` — think through unknowns or options                   | 1    |
 
 When intent is mixed or unclear, fall back to the artifact:
 
-| Artifact                                        | Gear               | Shift for                              |
-| ----------------------------------------------- | ------------------ | -------------------------------------- |
-| Code comment                                    | 3                  | 2 for rationale                        |
+| Artifact                                         | Gear               | Shift for                              |
+| ------------------------------------------------ | ------------------ | -------------------------------------- |
+| Code comment                                     | 3                  | 2 for rationale                        |
 | API doc, runbook, procedure, acceptance criteria | 3                  | 2 for background                       |
-| Agent skill, project instructions               | 3                  | 4 for lookup tables, 2 for context     |
-| PR description                                  | 2                  | 3 for testing, rollout, reviewer steps |
-| Review reply                                    | 2                  | 3 for exact commitments                |
-| Explainer, design summary, issue body           | 2                  | —                                      |
-| Architecture index, module summary, repo guide  | 4                  | 2 for short context                    |
-| Handoff note                                    | 4                  | 3 for next steps and commands          |
-| ADR                                             | 3 for the decision | 2 for rationale, 1 for discussion      |
-| Brainstorm, strategy, RFC discussion            | 1                  | —                                      |
+| Agent skill, project instructions                | 3                  | 4 for lookup tables, 2 for context     |
+| PR description                                   | 2                  | 3 for testing, rollout, reviewer steps |
+| Review reply                                     | 2                  | 3 for exact commitments                |
+| Explainer, design summary, issue body            | 2                  | —                                      |
+| Architecture index, module summary, repo guide   | 4                  | 2 for short context                    |
+| Handoff note                                     | 4                  | 3 for next steps and commands          |
+| ADR                                              | 3 for the decision | 2 for rationale, 1 for discussion      |
+| Brainstorm, strategy, RFC discussion             | 1                  | —                                      |
 
 ## Gear rules
 
