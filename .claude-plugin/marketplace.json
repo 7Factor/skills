@@ -11,6 +11,14 @@
         "."
       ],
       "description": "Usage/cost reports with self-refreshing pricing and per-account attribution."
+    },
+    {
+      "name": "token-optimizer",
+      "source": "./skills/token-optimizer",
+      "skills": [
+        "."
+      ],
+      "description": "Reduce Claude Code token usage: explorer subagent, test-output filtering hook, codebase overview generation, CLAUDE.md bootstrap."
     }
   ]
 }

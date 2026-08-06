@@ -10,6 +10,8 @@ directory with a `SKILL.md` file that describes when the skill should be loaded 
 - `mentor`: switches an agent into learning-first mentoring mode for developing engineers.
 - `claude-usage-report`: reports Claude Code usage & cost from local session transcripts.
   (For per-account attribution across multiple accounts, install as a plugin instead — [see below](#installing-claude-usage-report-skill-vs-plugin).)
+- `token-optimizer`: generates and maintains a per-repo architecture map so agents skip exploratory file reading. (For the full token savings, install as a plugin which adds a Haiku explorer subagent, a test-output filtering hook, and a repo bootstrap command — [see below](#installing-token-optimizer-skill-vs-plugin).)
+
 
 ## Install
 
@@ -78,6 +80,20 @@ DISABLE_TELEMETRY=1 npx skills add 7Factor/skills --skill <skill-name>
 per-account attribution. If you need to know *which account* a report or session belongs to
 — e.g. splitting spend across a personal and a work login — install it as a plugin instead.
 Everything else (pricing, per-session detail, totals) is identical between the two.
+
+## Installing `token-optimizer` (skill vs. plugin)
+
+- **As a Claude Code plugin (recommended):** installs the skill **plus** an `explorer` subagent (routes verbose work to Haiku), a `PreToolUse` hook that filters test output to failures-only, and a `/token-optimizer:setup` command that bootstraps a repo with a lean CLAUDE.md. The hook and subagent are where most of the token savings come from; the Skills CLI cannot install them.
+
+  /plugin marketplace add 7Factor/skills
+  /plugin install token-optimizer@7factor
+
+- **As a plain skill via the Skills CLI:** installs the codebase-overview behavior only — architecture-map generation, but no output filtering, no Haiku delegation, and no setup command.
+
+  npx skills add 7Factor/skills --skill token-optimizer
+
+After installing the plugin, run `/token-optimizer:setup` once per repo.
+
 
 ## Use
 
