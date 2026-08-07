@@ -1,0 +1,42 @@
+# Project: <NAME>
+
+<!-- TOKEN RULE: This file loads into context on EVERY turn of EVERY session.
+     Keep it under ~150 lines. If Claude can infer something by reading the
+     codebase in <1 min, delete it from here. Detailed workflow instructions
+     belong in .claude/skills/ (loaded on-demand), not here. -->
+
+## Stack
+- Language/runtime: <e.g., TypeScript / Node 20>
+- Framework: <e.g., Next.js 14, FastAPI>
+- Package manager: <e.g., pnpm — never use npm>
+- Database: <e.g., Postgres via Prisma>
+
+## Commands
+- Install: `<pnpm install>`
+- Dev server: `<pnpm dev>`
+- Tests: `<pnpm test>` (run a single file: `<pnpm test path/to/file>`)
+- Lint/format: `<pnpm lint && pnpm format>`
+- Typecheck: `<pnpm typecheck>`
+
+## Architecture (one line each — details live in the codebase-overview skill)
+- `src/api/` — route handlers, thin; business logic lives in services
+- `src/services/` — domain logic
+- `src/db/` — schema + migrations; never edit generated files
+- `tests/` — mirrors src/ structure
+
+## Hard rules
+- Prefer editing existing files over creating new ones.
+- Never touch: `<dist/, generated/, vendor/, .env*>`
+- Run the single relevant test file, not the whole suite, unless asked.
+- No new dependencies without asking.
+
+## Token efficiency rules
+- Do not read entire directories; read only files relevant to the task.
+- Use grep/glob to locate symbols before opening files.
+- Delegate log analysis, full test runs, and doc lookups to the `explorer` subagent.
+- Keep responses terse: no summaries of unchanged code, no restating the plan after executing it.
+
+# Compact instructions
+When compacting, preserve: the current task, files modified so far, failing
+test names, and decisions made. Discard: full file contents, passing test
+output, and exploratory reads.

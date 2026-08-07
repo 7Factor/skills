@@ -1,0 +1,9 @@
+{
+  "name": "token-optimizer",
+  "description": "Reduces Claude Code token usage: Haiku explorer subagent for verbose work, test-output filtering hook, on-demand codebase overview generation, and a lean CLAUDE.md bootstrap command.",
+  "version": "1.0.0",
+  "author": {
+    "name": "YOUR_NAME"
+  },
+  "license": "MIT"
+}
