@@ -7,6 +7,7 @@ directory with a `SKILL.md` file that describes when the skill should be loaded 
 
 ## Available Skills
 
+- `agent-retro`: reviews past agent sessions and suggests practical improvements to prompts, session habits, verification, and skill use.
 - `mentor`: switches an agent into learning-first mentoring mode for developing engineers.
 - `claude-usage-report`: reports Claude Code usage & cost from local session transcripts.
   (For per-account attribution across multiple accounts, install as a plugin instead — [see below](#installing-claude-usage-report-skill-vs-plugin).)
@@ -88,6 +89,31 @@ For example, after installing `mentor`:
 ```text
 Use mentor mode while helping me debug this issue.
 ```
+
+### Review how you work with agents
+
+After installing [`agent-retro`](skills/agent-retro/SKILL.md), ask:
+
+```text
+Use agent-retro to review my agent sessions from the past 90 days.
+Show what I should keep doing, the most useful changes, and one experiment
+for my next task. Ground the advice in examples from my sessions.
+```
+
+The skill uses standard Agent Skills frontmatter and has no scripts, hooks, or connector dependencies.
+History comes from the host's available tools, authorized local records, or transcripts you provide.
+It reports limited access and gives advice without changing your setup.
+
+The default discovery window is 90 days. Reading starts with up to 12 distinct tasks and expands
+based on coverage and findings within a stated budget. Large histories can use isolated research
+workers when the host supports them; the primary agent verifies the evidence behind its advice.
+
+- **Claude Code and Codex:** use the installer above, or `npx skills add . --skill agent-retro` from this checkout.
+- **Claude chat:** package the `skills/agent-retro` folder as a ZIP with `agent-retro/` at its root and upload it using [Claude's custom skill instructions](https://support.claude.com/en/articles/12512198-how-to-create-custom-skills).
+- **ChatGPT:** use the host's supported [skill loading](https://learn.chatgpt.com/docs/build-skills). If native installation is unavailable, attach or paste `SKILL.md` and `references/history-access.md`, provide the conversations to review, and ask it to follow the skill.
+- **Other agents:** load the folder through their Agent Skills support, or use the same instructions-and-transcripts approach.
+
+Loading the skill does not grant access to earlier conversations. The instruction fallback works with supplied text and requires no shell or history connector.
 
 ## Contributing
 
