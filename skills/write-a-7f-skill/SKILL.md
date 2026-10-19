@@ -1,7 +1,7 @@
 ---
 name: write-a-7f-skill
 description: Write or revise a portable 7Factor Software agent skill using Matt Pocock's skill-writing discipline and 7Factor's immutable-host script standard.
-compatibility: Requires filesystem access and a client supporting Claude-compatible manual skill invocation; best with /writing-great-skills installed.
+compatibility: Requires filesystem access and a client supporting Claude-compatible manual skill invocation; best with Matt Pocock's skill-writing guidance installed.
 argument-hint: "[skill request]"
 disable-model-invocation: true
 ---
@@ -10,25 +10,29 @@ disable-model-invocation: true
 
 ## Load the craft discipline
 
-Use Matt Pocock's `/writing-great-skills` as the primary authoring discipline. Fall back to the legacy `/write-a-skill`
-when that is the installed option. Treat that companion skill as the single source of truth for invocation, information
-hierarchy, completion criteria, progressive disclosure, leading words, and pruning; this skill supplies only the
-7Factor overlay.
+Use Matt Pocock's skill-writing guidance from [`mattpocock/skills`](https://github.com/mattpocock/skills) as the primary
+authoring discipline, regardless of its installed name. Treat that companion skill as the single source of truth for
+invocation, information hierarchy, completion criteria, progressive disclosure, leading words, and pruning; this skill
+supplies only the 7Factor overlay.
 
-1. Prefer guidance already active in the current turn.
-2. Invoke an available model-invoked companion skill. A user-invoked companion can only be activated by the user; if it
-   is installed but inactive, pause and ask the user to invoke it alongside this skill.
-3. If neither companion is installed, pause before authoring and strongly recommend installing
-   [`mattpocock/skills`](https://github.com/mattpocock/skills):
+1. Find installed candidates by descriptions covering writing or editing agent skills. Establish which candidate is
+   Matt's through installation records, plugin source, upstream comparison, or the user's confirmation of a manual
+   install. A built-in or another author's skill creator does not satisfy this gate. If identity is ambiguous, pause
+   and ask the user to identify Matt's skill.
+2. Prefer the identified Matt guidance already active in the current turn. Otherwise, invoke the model-invoked
+   companion using its discovered name. A user-invoked companion can only be activated by the user; if it is installed
+   but inactive, pause and ask the user to invoke it alongside this skill.
+3. If no Matt companion is identified, pause before authoring and strongly recommend installing from his repository:
 
    ```sh
    npx skills@latest add mattpocock/skills
    ```
 
-   Ask the user to select `/writing-great-skills`, then rerun the request with both skills. Continue without Matt's
-   discipline only after the user explicitly declines.
+   Ask the user to select his guidance for writing agent skills by its description, then rerun the request with both
+   skills.
 
-This gate is complete when Matt's current or legacy guidance is active, or the user has explicitly declined it.
+At any pause, offer to continue without Matt's guidance. Proceed to authoring only when his identified guidance is
+active, or the user has explicitly chosen to continue without it.
 
 ## Portability invariant
 
@@ -42,7 +46,7 @@ the core result remains available through the portable body alone.
    Establish concrete uses, destination, public or private status, invocation choice, and required resources. For a
    public skill in this repository, use `skills/<skill-name>/`. This step is complete when every choice that would
    materially change the skill is resolved.
-2. Design the skill with the active Matt guidance. Keep steps and their checkable completion criteria in `SKILL.md`;
+2. Design the skill using Matt's guidance when active. Keep steps and their checkable completion criteria in `SKILL.md`;
    disclose branch-specific reference behind explicit context pointers; remove duplication, sediment, and no-ops. This
    step is complete when every instruction has one authoritative home and every branch is reachable.
 3. Select frontmatter using the standard below. This step is complete when every included field changes discovery,
